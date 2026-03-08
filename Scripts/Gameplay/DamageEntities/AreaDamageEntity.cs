@@ -32,14 +32,17 @@ namespace MultiplayerARPG
         protected override void Awake()
         {
             base.Awake();
-            Identity.onGetInstance += OnGetInstance;
+            Identity.onGetInstance.AddListener(OnGetInstance);
+            Identity.onPushBack.AddListener(OnPushBack);
         }
 
         protected override void OnDestroy()
         {
             base.OnDestroy();
-            if (Identity != null)
-                Identity.onGetInstance -= OnGetInstance;
+            if (Identity != null && Identity.onGetInstance != null)
+                Identity.onGetInstance.RemoveListener(OnGetInstance);
+            if (Identity != null && Identity.onPushBack != null)
+                Identity.onPushBack.RemoveListener(OnPushBack);
             _identity = null;
             _receivingDamageHitBoxes?.Clear();
             onDestroy?.RemoveAllListeners();
@@ -130,7 +133,7 @@ namespace MultiplayerARPG
             target.ReceiveDamageWithoutConditionCheck(CacheTransform.position, _instigator, _damageAmounts, _weapon, _skill, _skillLevel, Random.Range(0, 255));
         }
 
-        protected override void OnPushBack()
+        public override void OnPushBack()
         {
             _receivingDamageHitBoxes.Clear();
             if (onDestroy != null)
@@ -199,9 +202,8 @@ namespace MultiplayerARPG
             Identity.PoolingSize = PoolSize;
         }
 
-        protected override void PushBack()
+        public override void PushBack()
         {
-            OnPushBack();
             Identity.NetworkDestroy();
         }
     }

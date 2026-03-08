@@ -31,14 +31,17 @@ namespace MultiplayerARPG
         {
             base.Awake();
             gameObject.layer = PhysicLayers.IgnoreRaycast;
-            Identity.onGetInstance += OnGetInstance;
+            Identity.onGetInstance.AddListener(OnGetInstance);
+            Identity.onPushBack.AddListener(OnPushBack);
         }
 
         protected override void OnDestroy()
         {
             base.OnDestroy();
-            if (Identity != null)
-                Identity.onGetInstance -= OnGetInstance;
+            if (Identity != null && Identity.onGetInstance != null)
+                Identity.onGetInstance.RemoveListener(OnGetInstance);
+            if (Identity != null && Identity.onPushBack != null)
+                Identity.onPushBack.RemoveListener(OnPushBack);
             _identity = null;
             _receivingBuffCharacters?.Clear();
             onDestroy?.RemoveAllListeners();
@@ -74,7 +77,7 @@ namespace MultiplayerARPG
         {
             base.Setup(buffApplier, skill, skillLevel, applyBuffToEveryone);
             PushBack(areaDuration);
-            this._applyDuration = applyDuration;
+            _applyDuration = applyDuration;
             _lastAppliedTime = Time.unscaledTime;
         }
 
@@ -93,7 +96,7 @@ namespace MultiplayerARPG
             }
         }
 
-        protected override void OnPushBack()
+        public override void OnPushBack()
         {
             _receivingBuffCharacters.Clear();
             if (onDestroy != null)
@@ -162,9 +165,8 @@ namespace MultiplayerARPG
             Identity.PoolingSize = PoolSize;
         }
 
-        protected override void PushBack()
+        public override void PushBack()
         {
-            OnPushBack();
             Identity.NetworkDestroy();
         }
     }

@@ -226,7 +226,7 @@ namespace MultiplayerARPG
                 CacheTransform.position += CacheTransform.forward * _missileSpeed * Time.deltaTime;
         }
 
-        protected override void OnPushBack()
+        public override void OnPushBack()
         {
             _previousPosition = null;
             if (onDestroy != null)

@@ -324,7 +324,7 @@ namespace MultiplayerARPG
             Destroying = true;
         }
 
-        protected override void OnPushBack()
+        public override void OnPushBack()
         {
             if (impactEffect && stickToHitObject && !instantiateImpact)
             {

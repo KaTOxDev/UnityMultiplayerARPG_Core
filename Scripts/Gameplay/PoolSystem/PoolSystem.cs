@@ -139,6 +139,12 @@ namespace MultiplayerARPG
             }
             else
             {
+#if UNITY_EDITOR && INIT_POOL_TO_TRANSFORM
+                instance.transform.SetParent(PoolingTransform);
+#else
+                instance.transform.SetParent(null);
+#endif
+                instance.OnPushBack();
                 instance.gameObject.SetActive(false);
                 queue.Enqueue(instance);
             }

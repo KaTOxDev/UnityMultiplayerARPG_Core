@@ -167,7 +167,7 @@ namespace MultiplayerARPG
             _awakenFrame = Time.frameCount;
         }
 
-        protected override void OnPushBack()
+        public override void OnPushBack()
         {
             _readyToHitWalls = true;
             SetReadyToHitWalls(false);
