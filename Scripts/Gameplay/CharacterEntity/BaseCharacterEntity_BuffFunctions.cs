@@ -12,7 +12,7 @@ namespace MultiplayerARPG
             if (!IsServer || this.IsDead())
                 return;
 
-            Buff tempBuff = default;
+            Buff tempBuff = null;
             bool isExtendDuration = false;
             int maxStack = 0;
             switch (type)
