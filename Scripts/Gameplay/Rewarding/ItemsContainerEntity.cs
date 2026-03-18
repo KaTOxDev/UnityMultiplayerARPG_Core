@@ -84,6 +84,7 @@ namespace MultiplayerARPG
         {
             base.SetupNetElements();
             _dropperTitle.syncMode = LiteNetLibSyncFieldMode.ServerToClients;
+            _dropperTitle.redundancyCount = 0;
             _dropperEntityId.syncMode = LiteNetLibSyncFieldMode.ServerToClients;
             _items.forOwnerOnly = false;
         }
