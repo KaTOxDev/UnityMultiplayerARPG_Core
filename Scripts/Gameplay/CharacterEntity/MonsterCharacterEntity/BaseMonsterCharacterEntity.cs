@@ -18,8 +18,6 @@ namespace MultiplayerARPG
         public const float TELEPORT_TO_SUMMONER_DELAY = 5f;
         protected static readonly ProfilerMarker s_UpdateProfilerMarker = new ProfilerMarker("BaseMonsterCharacterEntity - Update");
 
-        public readonly Dictionary<BaseCharacterEntity, ReceivedDamageRecord> receivedDamageRecords = new Dictionary<BaseCharacterEntity, ReceivedDamageRecord>();
-
         [Category("Character Settings")]
         [SerializeField]
         [FormerlySerializedAs("monsterCharacter")]
@@ -326,16 +324,16 @@ namespace MultiplayerARPG
 
         public override async void Killed(EntityInfo lastAttacker)
         {
-            base.Killed(lastAttacker);
-
             // If this summoned by someone, don't give reward to killer
             if (IsSummoned)
+            {
+                base.Killed(lastAttacker);
                 return;
+            }
 
             _killedReward = CurrentGameplayRule.MakeMonsterReward(CharacterDatabase, Level);
             // Giving gold and exp to players
             GivingRewardToKillers(FindLastAttackerPlayer(lastAttacker), _killedReward, out float itemDropRate);
-            receivedDamageRecords.Clear();
             // Clear dropping items, it will fills in `OnRandomDropItem` function
             _droppingItems.Clear();
             // Drop items
@@ -420,14 +418,13 @@ namespace MultiplayerARPG
             _killedReward.Dispose();
             _killedReward = null;
 
-            if (!IsSummoned)
-            {
-                // If not summoned by someone, destroy and respawn it
-                DestroyAndRespawn();
-            }
-
             // Clear looters because they are already set to dropped items
             _looters.Clear();
+
+            base.Killed(lastAttacker);
+
+            // If not summoned by someone, destroy and respawn it
+            DestroyAndRespawn();
         }
 
         /// <summary>
@@ -453,7 +450,7 @@ namespace MultiplayerARPG
         protected virtual void GivingRewardToKillers(BasePlayerCharacterEntity lastPlayer, Reward reward, out float itemDropRate)
         {
             itemDropRate = 1f;
-            if (receivedDamageRecords.Count <= 0)
+            if (_receivedDamageRecords.Count <= 0)
                 return;
 
             BaseCharacterEntity tempCharacterEntity;
