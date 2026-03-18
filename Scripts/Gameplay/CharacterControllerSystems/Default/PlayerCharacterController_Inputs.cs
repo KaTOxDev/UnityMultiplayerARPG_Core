@@ -794,12 +794,23 @@ namespace MultiplayerARPG
             }
             if (_turnToTargetActionType != TargetActionType.None)
             {
+                bool turnedToTarget = false;
                 Vector3 targetPosition = _turnToTargetPosition.HasValue ? _turnToTargetPosition.Value : TargetGameEntity.EntityTransform.position;
                 Vector3 lookAtDir = (targetPosition - EntityTransform.position).normalized;
                 Quaternion lookAtRot = Quaternion.LookRotation(lookAtDir);
-                PlayingCharacterEntity.SetLookRotation(lookAtRot, false);
-                float currentAngle = Quaternion.Angle(Quaternion.LookRotation(PlayingCharacterEntity.EntityTransform.forward), lookAtRot);
-                if (currentAngle <= 15f)
+                switch (GameInstance.Singleton.DimensionType)
+                {
+                    case DimensionType.Dimension2D:
+                        PlayingCharacterEntity.SetLookRotation(lookAtRot, true);
+                        turnedToTarget = true;
+                        break;
+                    default:
+                        PlayingCharacterEntity.SetLookRotation(lookAtRot, false);
+                        float currentAngle = Quaternion.Angle(Quaternion.LookRotation(PlayingCharacterEntity.EntityTransform.forward), lookAtRot);
+                        turnedToTarget = currentAngle <= 15f;
+                        break;
+                }
+                if (turnedToTarget)
                 {
                     switch (_turnToTargetActionType)
                     {
