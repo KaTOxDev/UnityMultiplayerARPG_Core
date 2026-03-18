@@ -161,7 +161,7 @@ namespace MultiplayerARPG
                 GuildId,
                 IsInSafeArea,
                 this,
-                null);
+                SummonerEntity);
         }
 
         protected override void EntityAwake()

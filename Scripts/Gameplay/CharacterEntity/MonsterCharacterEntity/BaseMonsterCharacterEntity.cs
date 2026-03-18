@@ -41,12 +41,6 @@ namespace MultiplayerARPG
         protected UnityEvent onSpawned = new UnityEvent();
         public UnityEvent OnSpawned { get { return onSpawned; } }
 
-        [Category("Sync Fields")]
-        [SerializeField]
-        protected SyncFieldUInt summonerObjectId = new SyncFieldUInt();
-        [SerializeField]
-        protected SyncFieldByte summonType = new SyncFieldByte();
-
         public override string EntityTitle
         {
             get
@@ -54,43 +48,6 @@ namespace MultiplayerARPG
                 string title = base.EntityTitle;
                 return !string.IsNullOrEmpty(title) ? title : characterDatabase.Title;
             }
-        }
-
-        private BaseCharacterEntity summoner;
-        public BaseCharacterEntity Summoner
-        {
-            get
-            {
-                if (summoner == null)
-                {
-                    LiteNetLibIdentity identity;
-                    if (Manager.Assets.TryGetSpawnedObject(summonerObjectId.Value, out identity))
-                        summoner = identity.GetComponent<BaseCharacterEntity>();
-                }
-                return summoner;
-            }
-            protected set
-            {
-                summoner = value;
-                if (IsServer)
-                    summonerObjectId.Value = summoner != null ? summoner.ObjectId : 0;
-            }
-        }
-
-        public SummonType SummonType
-        {
-            get { return (SummonType)summonType.Value; }
-            protected set { summonType.Value = (byte)value; }
-        }
-
-        public bool IsSummoned
-        {
-            get { return SummonType != SummonType.None; }
-        }
-
-        public bool IsSummonedAndSummonerExisted
-        {
-            get { return IsSummoned && Summoner != null; }
         }
 
         public GameSpawnArea<BaseMonsterCharacterEntity> SpawnArea { get; protected set; }
@@ -209,7 +166,7 @@ namespace MultiplayerARPG
                 0 /* Guild ID */,
                 IsInSafeArea,
                 this,
-                Summoner);
+                SummonerEntity);
         }
 
         protected override void EntityAwake()
@@ -234,7 +191,7 @@ namespace MultiplayerARPG
                 {
                     if (IsSummoned)
                     {
-                        if (!Summoner || Summoner.IsDead())
+                        if (!SummonerEntity || SummonerEntity.IsDead())
                         {
                             // Summoner disappear so destroy it
                             UnSummon();
@@ -242,15 +199,15 @@ namespace MultiplayerARPG
                         else
                         {
                             float currentTime = Time.unscaledTime;
-                            if (Vector3.Distance(EntityTransform.position, Summoner.EntityTransform.position) > CurrentGameInstance.maxFollowSummonerDistance &&
+                            if (Vector3.Distance(EntityTransform.position, SummonerEntity.EntityTransform.position) > CurrentGameInstance.maxFollowSummonerDistance &&
                                 currentTime - _lastTeleportToSummonerTime > TELEPORT_TO_SUMMONER_DELAY)
                             {
                                 // Teleport to summoner if too far from summoner
-                                Teleport(GameInstance.Singleton.GameplayRule.GetSummonPosition(Summoner), GameInstance.Singleton.GameplayRule.GetSummonRotation(Summoner), false);
+                                Teleport(GameInstance.Singleton.GameplayRule.GetSummonPosition(SummonerEntity), GameInstance.Singleton.GameplayRule.GetSummonRotation(SummonerEntity), false);
                                 _lastTeleportToSummonerTime = currentTime;
                             }
                             // Set its sub channel ID follow summoner
-                            Identity.SubChannelId = Summoner.SubChannelId;
+                            Identity.SubChannelId = SummonerEntity.SubChannelId;
                         }
                     }
                 }
@@ -269,13 +226,6 @@ namespace MultiplayerARPG
             CurrentStamina = (int)stats.stamina;
             CurrentFood = (int)stats.food;
             CurrentWater = (int)stats.water;
-        }
-
-        protected override void SetupNetElements()
-        {
-            base.SetupNetElements();
-            summonerObjectId.syncMode = LiteNetLibSyncFieldMode.ServerToClients;
-            summonType.syncMode = LiteNetLibSyncFieldMode.ServerToClients;
         }
 
         public override void OnIdentityInitialize()
@@ -492,11 +442,11 @@ namespace MultiplayerARPG
             if (!lastAttacker.TryGetEntity(out BaseCharacterEntity attackerCharacter))
                 return null;
             if (attackerCharacter is BaseMonsterCharacterEntity monsterCharacterEntity &&
-                monsterCharacterEntity.Summoner != null &&
-                monsterCharacterEntity.Summoner is BasePlayerCharacterEntity)
+                monsterCharacterEntity.SummonerEntity != null &&
+                monsterCharacterEntity.SummonerEntity is BasePlayerCharacterEntity)
             {
                 // Set its summoner as main enemy
-                lastAttacker = monsterCharacterEntity.Summoner.GetInfo();
+                lastAttacker = monsterCharacterEntity.SummonerEntity.GetInfo();
                 lastAttacker.TryGetEntity(out attackerCharacter);
             }
             return attackerCharacter as BasePlayerCharacterEntity;
@@ -531,10 +481,10 @@ namespace MultiplayerARPG
                     if (rewardRate > 1f)
                         rewardRate = 1f;
 
-                    if (tempCharacterEntity is BaseMonsterCharacterEntity tempMonsterCharacterEntity && tempMonsterCharacterEntity.Summoner != null && tempMonsterCharacterEntity.Summoner is BasePlayerCharacterEntity)
+                    if (tempCharacterEntity is BaseMonsterCharacterEntity tempMonsterCharacterEntity && tempMonsterCharacterEntity.SummonerEntity != null && tempMonsterCharacterEntity.SummonerEntity is BasePlayerCharacterEntity)
                     {
                         // Set its summoner as main enemy
-                        tempCharacterEntity = tempMonsterCharacterEntity.Summoner;
+                        tempCharacterEntity = tempMonsterCharacterEntity.SummonerEntity;
                     }
 
                     if (tempCharacterEntity is BasePlayerCharacterEntity tempPlayerCharacterEntity)
@@ -809,7 +759,7 @@ namespace MultiplayerARPG
 
         public void Summon(BaseCharacterEntity summoner, SummonType summonType, int level)
         {
-            Summoner = summoner;
+            SummonerEntity = summoner;
             SummonType = summonType;
             Level = level;
             InitStats();
