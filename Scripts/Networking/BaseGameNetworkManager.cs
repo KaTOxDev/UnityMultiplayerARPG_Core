@@ -39,10 +39,6 @@ namespace MultiplayerARPG
         public string ChannelPassword { get; set; } = string.Empty;
         public BaseMapInfo MapInfo { get; protected set; } = null;
         public static BaseMapInfo CurrentMapInfo => Singleton == null ? null : Singleton.MapInfo;
-        public bool ShouldPhysicSyncTransforms { get; set; }
-        public bool ShouldPhysicSyncTransforms2D { get; set; }
-
-        public bool useUnityAutoPhysicSyncTransform = true;
         // Spawn entities events
         public LiteNetLibLoadSceneEvent onSpawnEntitiesStart = new LiteNetLibLoadSceneEvent();
         public LiteNetLibLoadSceneEvent onSpawnEntitiesProgress = new LiteNetLibLoadSceneEvent();
@@ -114,9 +110,6 @@ namespace MultiplayerARPG
             if (_defaultInterestManager == null)
                 _defaultInterestManager = gameObject.AddComponent<JobifiedGridSpatialPartitioningAOI>();
             ManagerComponents = GetComponents<BaseGameNetworkManagerComponent>();
-            // Force change physic auto sync transforms mode to manual
-            Physics.autoSyncTransforms = useUnityAutoPhysicSyncTransform;
-            Physics2D.autoSyncTransforms = useUnityAutoPhysicSyncTransform;
             // Setup character hidding condition
             LiteNetLibIdentity.ForceHideFunctions.Add(IsHideEntity);
             base.Awake();
@@ -169,13 +162,6 @@ namespace MultiplayerARPG
                     SendTimeOfDay();
                 }
             }
-            // Network messages were handled (in base.Update()), enity movement proceeded, it may have transform changing manually, and need to sync tranforms before update physic movement
-            if (ShouldPhysicSyncTransforms && !Physics.autoSyncTransforms)
-                Physics.SyncTransforms();
-            ShouldPhysicSyncTransforms = false;
-            if (ShouldPhysicSyncTransforms2D && !Physics2D.autoSyncTransforms)
-                Physics2D.SyncTransforms();
-            ShouldPhysicSyncTransforms2D = false;
 
             // Update game entity, it may update entities movement
             if (IsNetworkActive)

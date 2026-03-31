@@ -1312,7 +1312,6 @@ namespace MultiplayerARPG
                     if (movementSecure == MovementSecure.ServerAuthoritative || !IsOwnerClient)
                     {
                         EntityMovement.SetPosition(position);
-                        CurrentGameManager.ShouldPhysicSyncTransforms = true;
                         RemoteTurnSimulation(true, yAngle, unityDeltaTime);
                     }
                     MovementState = _tempMovementState = movementState;
@@ -1499,7 +1498,6 @@ namespace MultiplayerARPG
                     // Allow to move to the position
                     _acceptedPosition = newPos;
                     EntityMovement.SetPosition(newPos);
-                    CurrentGameManager.ShouldPhysicSyncTransforms = true;
                     // Update character rotation
                     RemoteTurnSimulation(true, yAngle, unityDeltaTime);
                 }
@@ -1540,7 +1538,6 @@ namespace MultiplayerARPG
                 NavPaths = null;
             _verticalVelocity = 0;
             EntityMovement.SetPosition(position);
-            CurrentGameManager.ShouldPhysicSyncTransforms = true;
             TurnImmediately(yAngle);
             if (!IsServer && IsOwnerClient)
                 _isClientConfirmingTeleport = true;
