@@ -934,7 +934,7 @@ namespace MultiplayerARPG
         public void FindGameEntitiesInDistance<T>(List<T> list, float distance, int overlayMask)
             where T : class, IGameEntity
         {
-            FindPhysicFunctions.FindGameEntitiesInDistance<T>(EntityTransform.position, distance + FIND_ENTITY_DISTANCE_BUFFER, overlayMask);
+            FindPhysicFunctions.FindGameEntitiesInDistance(EntityTransform.position, distance + FIND_ENTITY_DISTANCE_BUFFER, overlayMask, list);
         }
 
         public void FindEntities<T>(List<T> list, Vector3 origin, float distance, bool findForAlive, bool findForAlly, bool findForEnemy, bool findForNeutral, int overlapMask, bool findInFov = false, float fov = 0)
