@@ -50,7 +50,7 @@ namespace MultiplayerARPG
         int amount);
 
     public delegate void AttackRoutineDelegate(
-        BaseGameEntity target,
+        BaseCharacterEntity target,
         bool isLeftHand,
         CharacterItem weapon,
         int simulateSeed,
@@ -60,7 +60,7 @@ namespace MultiplayerARPG
         AimPosition aimPosition);
 
     public delegate void UseSkillRoutineDelegate(
-        BaseGameEntity target,
+        BaseCharacterEntity target,
         BaseSkill skill,
         int level,
         bool isLeftHand,
@@ -72,7 +72,7 @@ namespace MultiplayerARPG
         AimPosition aimPosition);
 
     public delegate void LaunchDamageEntityDelegate(
-        BaseGameEntity target,
+        BaseCharacterEntity target,
         bool isLeftHand,
         CharacterItem weapon,
         int simulateSeed,
@@ -84,11 +84,11 @@ namespace MultiplayerARPG
         AimPosition aimPosition);
 
     public delegate void ApplyBuffDelegate(
-        BaseGameEntity target,
+        BaseCharacterEntity target,
         CharacterBuff buff);
 
     public delegate void RemoveBuffDelegate(
-        BaseGameEntity target,
+        BaseCharacterEntity target,
         CharacterBuff buff,
         BuffRemoveReasons reason);
 
@@ -188,6 +188,7 @@ namespace MultiplayerARPG
         int level,
         int amount);
 
+    #region Game Entity
     public delegate void GameEntityDelegate(
         BaseGameEntity target);
 
@@ -250,19 +251,155 @@ namespace MultiplayerARPG
         BaseGameEntity target,
         string oldValue,
         string newValue);
+    #endregion
 
-    public delegate void GameEntityVector3ChangeDelegate(
-        BaseGameEntity target,
+    #region Damageable Entity
+    public delegate void DamageableEntityDelegate(
+        DamageableEntity target);
+
+    public delegate void DamageableEntityInt8ChangeDelegate(
+        DamageableEntity target,
+        sbyte oldValue,
+        sbyte newValue);
+
+    public delegate void DamageableEntityInt16ChangeDelegate(
+        DamageableEntity target,
+        short oldValue,
+        short newValue);
+
+    public delegate void DamageableEntityInt32ChangeDelegate(
+        DamageableEntity target,
+        int oldValue,
+        int newValue);
+
+    public delegate void DamageableEntityInt64ChangeDelegate(
+        DamageableEntity target,
+        long oldValue,
+        long newValue);
+
+    public delegate void DamageableEntityUInt8ChangeDelegate(
+        DamageableEntity target,
+        byte oldValue,
+        byte newValue);
+
+    public delegate void DamageableEntityUInt16ChangeDelegate(
+        DamageableEntity target,
+        ushort oldValue,
+        ushort newValue);
+
+    public delegate void DamageableEntityUInt32ChangeDelegate(
+        DamageableEntity target,
+        uint oldValue,
+        uint newValue);
+
+    public delegate void DamageableEntityUInt64ChangeDelegate(
+        DamageableEntity target,
+        ulong oldValue,
+        ulong newValue);
+
+    public delegate void DamageableEntitySingleChangeDelegate(
+        DamageableEntity target,
+        float oldValue,
+        float newValue);
+
+    public delegate void DamageableEntityDoubleChangeDelegate(
+        DamageableEntity target,
+        double oldValue,
+        double newValue);
+
+    public delegate void DamageableEntityBooleanChangeDelegate(
+        DamageableEntity target,
+        bool oldValue,
+        bool newValue);
+
+    public delegate void DamageableEntityStringChangeDelegate(
+        DamageableEntity target,
+        string oldValue,
+        string newValue);
+    #endregion
+
+    #region Character Entity
+    public delegate void CharacterEntityDelegate(
+        BaseCharacterEntity target);
+
+    public delegate void CharacterEntityInt8ChangeDelegate(
+        BaseCharacterEntity target,
+        sbyte oldValue,
+        sbyte newValue);
+
+    public delegate void CharacterEntityInt16ChangeDelegate(
+        BaseCharacterEntity target,
+        short oldValue,
+        short newValue);
+
+    public delegate void CharacterEntityInt32ChangeDelegate(
+        BaseCharacterEntity target,
+        int oldValue,
+        int newValue);
+
+    public delegate void CharacterEntityInt64ChangeDelegate(
+        BaseCharacterEntity target,
+        long oldValue,
+        long newValue);
+
+    public delegate void CharacterEntityUInt8ChangeDelegate(
+        BaseCharacterEntity target,
+        byte oldValue,
+        byte newValue);
+
+    public delegate void CharacterEntityUInt16ChangeDelegate(
+        BaseCharacterEntity target,
+        ushort oldValue,
+        ushort newValue);
+
+    public delegate void CharacterEntityUInt32ChangeDelegate(
+        BaseCharacterEntity target,
+        uint oldValue,
+        uint newValue);
+
+    public delegate void CharacterEntityUInt64ChangeDelegate(
+        BaseCharacterEntity target,
+        ulong oldValue,
+        ulong newValue);
+
+    public delegate void CharacterEntitySingleChangeDelegate(
+        BaseCharacterEntity target,
+        float oldValue,
+        float newValue);
+
+    public delegate void CharacterEntityDoubleChangeDelegate(
+        BaseCharacterEntity target,
+        double oldValue,
+        double newValue);
+
+    public delegate void CharacterEntityBooleanChangeDelegate(
+        BaseCharacterEntity target,
+        bool oldValue,
+        bool newValue);
+
+    public delegate void CharacterEntityStringChangeDelegate(
+        BaseCharacterEntity target,
+        string oldValue,
+        string newValue);
+
+    public delegate void CharacterEntityVector3ChangeDelegate(
+        BaseCharacterEntity target,
         Vector3 oldValue,
         Vector3 newValue);
 
-    public delegate void GameEntityAimPositionChangeDelegate(
-        BaseGameEntity target,
+    public delegate void CharacterEntityAimPositionChangeDelegate(
+        BaseCharacterEntity target,
         AimPosition oldValue,
         AimPosition newValue);
 
-    public delegate void GameEntitySummonerChangeDelegate(
-        BaseGameEntity target,
+    public delegate void CharacterEntityMountChangeDelegate(
+        BaseCharacterEntity target,
+        CharacterMount oldValue,
+        CharacterMount newValue);
+
+    public delegate void CharacterEntitySummonerChangeDelegate(
+        BaseCharacterEntity target,
         CharacterSummoner oldValue,
         CharacterSummoner newValue);
+    #endregion
 }

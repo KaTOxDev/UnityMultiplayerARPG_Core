@@ -65,7 +65,7 @@ namespace MultiplayerARPG
             _receivedDamageTime = Time.unscaledTime;
         }
 
-        protected void OnCurrentHpChange(int hp)
+        protected void OnCurrentHpChange(DamageableEntity target, int oldHp, int hp)
         {
             UpdateHp();
         }

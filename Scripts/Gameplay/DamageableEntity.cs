@@ -41,7 +41,7 @@ namespace MultiplayerARPG
         public UnityEvent onCriticalDamageHit = new UnityEvent();
         public UnityEvent onBlockedDamageHit = new UnityEvent();
         public UnityEvent onDamageMissed = new UnityEvent();
-        public event System.Action<int> onCurrentHpChange;
+        public event DamageableEntityInt32ChangeDelegate onCurrentHpChange;
         public event ReceiveDamageDelegate onReceiveDamage;
         public event ReceivedDamageDelegate onReceivedDamage;
 
@@ -111,7 +111,7 @@ namespace MultiplayerARPG
         private void OnCurrentHpChange(bool isInitial, int oldCurrentHp, int currentHp)
         {
             if (onCurrentHpChange != null)
-                onCurrentHpChange.Invoke(currentHp);
+                onCurrentHpChange.Invoke(this, oldCurrentHp, currentHp);
         }
 
         private DamageableHitBox[] CreateHitBoxes()

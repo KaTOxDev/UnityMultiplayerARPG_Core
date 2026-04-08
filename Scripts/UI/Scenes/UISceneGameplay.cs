@@ -584,7 +584,7 @@ namespace MultiplayerARPG
             uiGuildInvitation.Show();
         }
 
-        public void OnIsWarpingChange(bool isWarping)
+        public void OnIsWarpingChange(BaseCharacterEntity target, bool oldIsWarping, bool isWarping)
         {
             if (uiIsWarping == null)
                 return;
