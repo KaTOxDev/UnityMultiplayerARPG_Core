@@ -471,7 +471,10 @@ namespace MultiplayerARPG
                     return false;
             }
 
-            return true;
+            bool canAttack = true;
+            if (onCanAttackValidated != null)
+                onCanAttackValidated(this, ref canAttack);
+            return canAttack;
         }
 
         public bool ValidateUseSkill(int dataId, bool isLeftHand, uint targetObjectId)
@@ -507,7 +510,10 @@ namespace MultiplayerARPG
                     return false;
             }
 
-            return true;
+            bool canUseSkill = true;
+            if (onCanUseSkillValidated != null)
+                onCanUseSkillValidated(this, ref canUseSkill);
+            return canUseSkill;
         }
 
         public bool ValidateUseSkillItem(int index, bool isLeftHand, uint targetObjectId)
@@ -543,7 +549,10 @@ namespace MultiplayerARPG
                     return false;
             }
 
-            return true;
+            bool canUseSkillItem = true;
+            if (onCanUseSkillItemValidated != null)
+                onCanUseSkillItemValidated(this, ref canUseSkillItem);
+            return canUseSkillItem;
         }
 
         public bool ValidateReload(bool isLeftHand)
@@ -577,7 +586,10 @@ namespace MultiplayerARPG
                     return false;
             }
 
-            return true;
+            bool canReload = true;
+            if (onCanReloadValidated != null)
+                onCanReloadValidated(this, ref canReload);
+            return canReload;
         }
 
         public bool Attack(ref WeaponHandlingState weaponHandlingState)

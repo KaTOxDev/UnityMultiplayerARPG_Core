@@ -46,6 +46,10 @@ namespace MultiplayerARPG
         public event AttackRoutineDelegate onAttackRoutine;
         public event UseSkillRoutineDelegate onUseSkillRoutine;
         public event LaunchDamageEntityDelegate onLaunchDamageEntity;
+        public event CanAttackDelegate onCanAttackValidated;
+        public event CanUseSkillDelegate onCanUseSkillValidated;
+        public event CanUseSkillDelegate onCanUseSkillItemValidated;
+        public event CanReloadDelegate onCanReloadValidated;
         // Buff events
         public event ApplyBuffDelegate onApplyBuff;
         public event RemoveBuffDelegate onRemoveBuff;
