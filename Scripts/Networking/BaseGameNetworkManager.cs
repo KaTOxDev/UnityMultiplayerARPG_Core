@@ -693,19 +693,14 @@ namespace MultiplayerARPG
                             unreliableWriter.SetPosition(posBeforeWriteUnreliableStateCount);
                             unreliableWriter.Put(unreliableStateCount);
                             unreliableWriter.SetPosition(tempLastPosition);
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
                             try
                             {
-#endif
                                 ServerSendMessage(player.ConnectionId, BaseGameEntity.MOVEMENT_DATA_CHANNEL, DeliveryMethod.Unreliable, unreliableWriter);
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
                             }
-                            catch (TooBigPacketException ex)
+                            catch (TooBigPacketException)
                             {
                                 Logging.LogError(LogTag, $"Too Big Packet {unreliableWriter.Length}");
-                                throw ex;
                             }
-#endif
                             unreliableStateCount = 0;
                             unreliableWriter.SetPosition(posAfterWriteUnreliableStateCount);
                         }
@@ -731,20 +726,14 @@ namespace MultiplayerARPG
                     unreliableWriter.SetPosition(posBeforeWriteUnreliableStateCount);
                     unreliableWriter.Put(unreliableStateCount);
                     unreliableWriter.SetPosition(tempLastPosition);
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
                     try
                     {
-#endif
                         ServerSendMessage(player.ConnectionId, BaseGameEntity.MOVEMENT_DATA_CHANNEL, DeliveryMethod.Unreliable, unreliableWriter);
-
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
                     }
-                    catch (TooBigPacketException ex)
+                    catch (TooBigPacketException)
                     {
                         Logging.LogError(LogTag, $"Too Big Packet {unreliableWriter.Length}");
-                        throw ex;
                     }
-#endif
                 }
             }
         }
