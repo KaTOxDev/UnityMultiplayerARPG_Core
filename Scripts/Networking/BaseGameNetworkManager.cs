@@ -687,8 +687,8 @@ namespace MultiplayerARPG
                     {
                         tempLastPosition = unreliableWriter.Length;
                         // If packet will too big, send created one then re-create a new packet
-                        const byte intSize = 4;
-                        if (tempLastPosition + EntityMovementDataBuffers.StateDataWriter.Length + intSize >= MAX_UNRELIABLE_PACKET_SIZE)
+                        const byte idAndLengthSize = 8; // Use 2 ints for object ID and state data length
+                        if (tempLastPosition + EntityMovementDataBuffers.StateDataWriter.Length + idAndLengthSize >= MAX_UNRELIABLE_PACKET_SIZE)
                         {
                             unreliableWriter.SetPosition(posBeforeWriteUnreliableStateCount);
                             unreliableWriter.Put(unreliableStateCount);
