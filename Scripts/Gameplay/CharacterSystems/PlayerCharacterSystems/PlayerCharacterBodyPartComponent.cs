@@ -304,7 +304,7 @@ namespace MultiplayerARPG
             Dictionary<string, EquipmentModel> storingModels,
             HashSet<string> unequippingSockets)
         {
-            target.SetupEquippingModels(cancellationTokenSource, showingModels, storingModels, unequippingSockets, options[_currentModelIndex].models, CreateFakeEquipPosition(), CreateFakeCharacterItem(), false, 0, OnShowEquipmentModel).Forget();
+            target.SetupEquippingModels(cancellationTokenSource, showingModels, storingModels, unequippingSockets, options[_currentModelIndex].models, CreateFakeEquipPosition(), CreateFakeCharacterItem(), false, 0, OnShowEquipmentModel);
         }
 
         private void OnSetup(BaseGameEntity target)
