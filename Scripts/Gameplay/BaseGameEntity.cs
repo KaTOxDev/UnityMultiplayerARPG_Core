@@ -519,6 +519,11 @@ namespace MultiplayerARPG
             return false;
         }
 
+        public void SetNextActionDelay(ref float lastActionTime, float delay)
+        {
+            lastActionTime = Time.unscaledTime + delay;
+        }
+
         public bool UpdateLastActionTime(ref float lastActionTime, float delay)
         {
             float time = Time.unscaledTime;
