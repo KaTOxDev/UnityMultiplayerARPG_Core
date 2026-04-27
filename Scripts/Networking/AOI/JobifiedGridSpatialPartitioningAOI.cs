@@ -171,6 +171,7 @@ namespace MultiplayerARPG
             if (_system == null)
                 return;
 
+            Manager.Assets.manuallyApplyOwnerChanges = true;
             _updateCountDown -= deltaTime;
             if (_updateCountDown > 0)
                 return;
@@ -246,94 +247,96 @@ namespace MultiplayerARPG
 
         private void LateUpdate()
         {
-            if (!_isQuerying)
-                return;
-
-            _isQuerying = false;
-
-            using (s_CompleteProfilerMarker.Auto())
+            if (_isQuerying)
             {
-                _system.Complete();
+                _isQuerying = false;
 
-                NativeList<SpatialObject> queryResult;
-                HashSet<uint> subscribings;
-                LiteNetLibIdentity foundPlayerObject;
-                foreach (var playerQueryKvp in _queryingPlayerSubscribings)
+                using (s_CompleteProfilerMarker.Auto())
                 {
-                    if (!Manager.Assets.TryGetSpawnedObject(playerQueryKvp.Key, out LiteNetLibIdentity spawnedObject))
-                        continue;
-                    queryResult = playerQueryKvp.Value;
-                    for (int i = 0; i < queryResult.Length; ++i)
+                    _system.Complete();
+
+                    NativeList<SpatialObject> queryResult;
+                    HashSet<uint> subscribings;
+                    LiteNetLibIdentity foundPlayerObject;
+                    foreach (var playerQueryKvp in _queryingPlayerSubscribings)
                     {
-                        uint contactedObjectId = queryResult[i].objectId;
-                        if (!Manager.Assets.TryGetSpawnedObject(contactedObjectId, out foundPlayerObject))
-                        {
+                        if (!Manager.Assets.TryGetSpawnedObject(playerQueryKvp.Key, out LiteNetLibIdentity spawnedObject))
                             continue;
-                        }
-                        if (!ShouldSubscribe(foundPlayerObject, spawnedObject, false))
+                        queryResult = playerQueryKvp.Value;
+                        for (int i = 0; i < queryResult.Length; ++i)
                         {
-                            continue;
-                        }
-                        if (!_playerSubscribings.TryGetValue(contactedObjectId, out subscribings))
-                            subscribings = new HashSet<uint>();
-                        subscribings.Add(spawnedObject.ObjectId);
-                        _playerSubscribings[contactedObjectId] = subscribings;
-                    }
-                    ReturnResultList(queryResult);
-                }
-                _queryingPlayerSubscribings.Clear();
-
-                foreach (var componentQueryKvp in _queryingComponentSubscribings)
-                {
-                    if (!SpatialObjectContainer.TryGet(componentQueryKvp.Key, out ISpatialObjectComponent component))
-                        continue;
-                    queryResult = componentQueryKvp.Value;
-                    for (int i = 0; i < queryResult.Length; ++i)
-                    {
-                        uint contactedObjectId = queryResult[i].objectId;
-                        if (Manager.Assets.TryGetSpawnedObject(contactedObjectId, out foundPlayerObject))
-                            component.AddSubscriber(foundPlayerObject.ObjectId);
-                    }
-                    ReturnResultList(queryResult);
-                }
-                _queryingComponentSubscribings.Clear();
-
-                var players = Manager.GetPlayers();
-                while (players.MoveNext())
-                {
-                    LiteNetLibPlayer player = players.Current.Value;
-                    if (!player.IsReady)
-                    {
-                        // Don't subscribe if player not ready
-                        continue;
-                    }
-                    var playerObjs = player.GetSpawnedObjects();
-                    while (playerObjs.MoveNext())
-                    {
-                        LiteNetLibIdentity playerObj = playerObjs.Current.Value;
-                        if (_playerSubscribings.TryGetValue(playerObj.ObjectId, out subscribings))
-                        {
-                            if (_alwaysVisibleObjects.Count > 0)
+                            uint contactedObjectId = queryResult[i].objectId;
+                            if (!Manager.Assets.TryGetSpawnedObject(contactedObjectId, out foundPlayerObject))
                             {
-                                foreach (uint alwaysVisibleObject in _alwaysVisibleObjects)
-                                {
-                                    subscribings.Add(alwaysVisibleObject);
-                                }
+                                continue;
                             }
-                            playerObj.UpdateSubscribings(subscribings);
-                            subscribings.Clear();
+                            if (!ShouldSubscribe(foundPlayerObject, spawnedObject, false))
+                            {
+                                continue;
+                            }
+                            if (!_playerSubscribings.TryGetValue(contactedObjectId, out subscribings))
+                                subscribings = new HashSet<uint>();
+                            subscribings.Add(spawnedObject.ObjectId);
+                            _playerSubscribings[contactedObjectId] = subscribings;
                         }
-                        else if (_alwaysVisibleObjects.Count > 0)
+                        ReturnResultList(queryResult);
+                    }
+                    _queryingPlayerSubscribings.Clear();
+
+                    foreach (var componentQueryKvp in _queryingComponentSubscribings)
+                    {
+                        if (!SpatialObjectContainer.TryGet(componentQueryKvp.Key, out ISpatialObjectComponent component))
+                            continue;
+                        queryResult = componentQueryKvp.Value;
+                        for (int i = 0; i < queryResult.Length; ++i)
                         {
-                            playerObj.UpdateSubscribings(_alwaysVisibleObjects);
+                            uint contactedObjectId = queryResult[i].objectId;
+                            if (Manager.Assets.TryGetSpawnedObject(contactedObjectId, out foundPlayerObject))
+                                component.AddSubscriber(foundPlayerObject.ObjectId);
                         }
-                        else
+                        ReturnResultList(queryResult);
+                    }
+                    _queryingComponentSubscribings.Clear();
+
+                    var players = Manager.GetPlayers();
+                    while (players.MoveNext())
+                    {
+                        LiteNetLibPlayer player = players.Current.Value;
+                        if (!player.IsReady)
                         {
-                            playerObj.ClearSubscribings();
+                            // Don't subscribe if player not ready
+                            continue;
+                        }
+                        var playerObjs = player.GetSpawnedObjects();
+                        while (playerObjs.MoveNext())
+                        {
+                            LiteNetLibIdentity playerObj = playerObjs.Current.Value;
+                            if (_playerSubscribings.TryGetValue(playerObj.ObjectId, out subscribings))
+                            {
+                                if (_alwaysVisibleObjects.Count > 0)
+                                {
+                                    foreach (uint alwaysVisibleObject in _alwaysVisibleObjects)
+                                    {
+                                        subscribings.Add(alwaysVisibleObject);
+                                    }
+                                }
+                                playerObj.UpdateSubscribings(subscribings);
+                                subscribings.Clear();
+                            }
+                            else if (_alwaysVisibleObjects.Count > 0)
+                            {
+                                playerObj.UpdateSubscribings(_alwaysVisibleObjects);
+                            }
+                            else
+                            {
+                                playerObj.ClearSubscribings();
+                            }
                         }
                     }
                 }
             }
+
+            Manager.Assets.ApplyOwnerChanges();
         }
     }
 }
