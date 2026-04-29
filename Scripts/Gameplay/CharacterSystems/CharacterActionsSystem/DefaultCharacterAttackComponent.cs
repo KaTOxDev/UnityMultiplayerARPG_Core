@@ -193,7 +193,8 @@ namespace MultiplayerARPG
                 float remainsDuration = totalDuration;
                 if (weaponItem.RateOfFire > 0)
                 {
-                    totalDuration = RATE_OF_FIRE_BASE / (weaponItem.RateOfFire + entityCaches.RateOfFire);
+                    float baseRateOfFire = weaponItem.RateOfFire;
+                    totalDuration = RATE_OF_FIRE_BASE / (baseRateOfFire + entityCaches.RateOfFireModifier + (entityCaches.RateOfFireRate * baseRateOfFire));
                     remainsDuration = BaseCharacterModel.GetAnimationDuration(totalDuration, animSpeedRate, 0f);
                     triggerDurations = new float[] { 0f };
                     LastAttackEndTime = Time.unscaledTime + remainsDuration;
@@ -403,30 +404,35 @@ namespace MultiplayerARPG
             }
 
             bool isLeftHand = weaponHandlingState.Has(WeaponHandlingState.IsLeftHand);
-            byte fireSpreadAmount = 0;
-            Vector3 fireSpreadRange = Vector3.zero;
+            byte basefireSpreadAmount = 0;
+            Vector3 baseFireSpreadRange = Vector3.zero;
             IWeaponItem weaponItem = weapon.GetWeaponItem();
             if (weaponItem != null)
             {
                 // For monsters, their weapon can be null so have to avoid null exception
-                fireSpreadAmount = weaponItem.FireSpreadAmount;
-                fireSpreadRange = weaponItem.FireSpreadRange;
+                basefireSpreadAmount = weaponItem.FireSpreadAmount;
+                baseFireSpreadRange = weaponItem.FireSpreadRange;
                 if (weaponHandlingState.Has(WeaponHandlingState.IsAiming) && weaponItem.FireSpreadRangeWhileAiming.x > float.MinValue)
                 {
-                    fireSpreadRange = weaponItem.FireSpreadRangeWhileAiming;
+                    baseFireSpreadRange = weaponItem.FireSpreadRangeWhileAiming;
                 }
                 else if (weaponHandlingState.Has(WeaponHandlingState.IsShoulderView) && weaponItem.FireSpreadRangeWhileShoulderViewMode.x > float.MinValue)
                 {
-                    fireSpreadRange = weaponItem.FireSpreadRangeWhileShoulderViewMode;
+                    baseFireSpreadRange = weaponItem.FireSpreadRangeWhileShoulderViewMode;
                 }
                 else if (weaponHandlingState.Has(WeaponHandlingState.IsFpsView) && weaponItem.FireSpreadRangeWhileFpsViewMode.x > float.MinValue)
                 {
-                    fireSpreadRange = weaponItem.FireSpreadRangeWhileFpsViewMode;
+                    baseFireSpreadRange = weaponItem.FireSpreadRangeWhileFpsViewMode;
                 }
             }
 
-            fireSpreadAmount += (byte)Mathf.CeilToInt(entityCaches.FireSpread);
-            fireSpreadRange *= 1 + entityCaches.FireSpreadRangeRate;
+            byte fireSpreadAmount = basefireSpreadAmount;
+            fireSpreadAmount += (byte)Mathf.CeilToInt(entityCaches.FireSpreadModifier);
+            fireSpreadAmount += (byte)Mathf.CeilToInt(entityCaches.FireSpreadRate * basefireSpreadAmount);
+
+            Vector3 fireSpreadRange = baseFireSpreadRange;
+            fireSpreadRange += Vector3.one * entityCaches.FireSpreadRangeModifier;
+            fireSpreadRange += baseFireSpreadRange * entityCaches.FireSpreadRangeRate;
 
             // Make sure it won't increase damage to the wrong collction
             for (byte spreadIndex = 0; spreadIndex < fireSpreadAmount + 1; ++spreadIndex)

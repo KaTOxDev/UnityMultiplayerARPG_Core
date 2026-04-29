@@ -41,13 +41,22 @@ namespace MultiplayerARPG
                 data.fallDamageAbsorbs == 0f &&
                 data.gravityRate == 0f &&
                 data.protectedSlotLimit == 0f &&
-                data.ammoCapacity == 0f &&
-                data.recoilModifier == 0f &&
-                data.recoilRate == 0f &&
-                data.rateOfFire == 0f &&
-                data.reloadDuration == 0f &&
-                data.fireSpreadRangeRate == 0f &&
-                data.fireSpread == 0f &&
+                data.ammoCapacityModifier == 0 &&
+                data.ammoCapacityRate == 0 &&
+                data.recoilModifier == 0 &&
+                data.recoilYawModifier == 0 &&
+                data.recoilRollModifier == 0 &&
+                data.recoilRate == 0 &&
+                data.recoilYawRate == 0 &&
+                data.recoilRollRate == 0 &&
+                data.rateOfFireModifier == 0 &&
+                data.rateOfFireRate == 0 &&
+                data.reloadDurationModifier == 0 &&
+                data.reloadDurationRate == 0 &&
+                data.fireSpreadRangeModifier == 0 &&
+                data.fireSpreadRangeRate == 0 &&
+                data.fireSpreadModifier == 0 &&
+                data.fireSpreadRate == 0 &&
                 data.decreaseFoodDecreation == 0f &&
                 data.decreaseWaterDecreation == 0f &&
                 data.decreaseStaminaDecreation == 0f &&

@@ -1,5 +1,7 @@
 ﻿using Insthync.DevExtension;
 using UnityEngine;
+using UnityEngine.Serialization;
+
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -78,19 +80,37 @@ namespace MultiplayerARPG
         [Tooltip("Format => {0} = {Amount}")]
         public UILocaleKeySetting formatKeyProtectedSlotLimitStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_PROTECTED_SLOT_LIMIT);
         [Tooltip("Format => {0} = {Amount}")]
-        public UILocaleKeySetting formatKeyAmmoCapacityStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_AMMO_CAPACITY);
+        public UILocaleKeySetting formatKeyAmmoCapacityModifierStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_AMMO_CAPACITY_MODIFIER);
+        [Tooltip("Format => {0} = {Amount * 100}")]
+        public UILocaleKeySetting formatKeyAmmoCapacityRateStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_AMMO_CAPACITY_MODIFIER_RATE);
         [Tooltip("Format => {0} = {Amount}")]
         public UILocaleKeySetting formatKeyRecoilModifierStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_RECOIL_MODIFIER);
+        [Tooltip("Format => {0} = {Amount}")]
+        public UILocaleKeySetting formatKeyRecoilYawModifierStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_RECOIL_YAW_MODIFIER);
+        [Tooltip("Format => {0} = {Amount}")]
+        public UILocaleKeySetting formatKeyRecoilRollModifierStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_RECOIL_ROLL_MODIFIER);
         [Tooltip("Format => {0} = {Amount * 100}")]
         public UILocaleKeySetting formatKeyRecoilRateStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_RECOIL_RATE);
+        [Tooltip("Format => {0} = {Amount * 100}")]
+        public UILocaleKeySetting formatKeyRecoilYawRateStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_RECOIL_YAW_RATE);
+        [Tooltip("Format => {0} = {Amount * 100}")]
+        public UILocaleKeySetting formatKeyRecoilRollRateStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_RECOIL_ROLL_RATE);
         [Tooltip("Format => {0} = {Amount}")]
-        public UILocaleKeySetting formatKeyRateOfFireStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_RATE_OF_FIRE);
+        public UILocaleKeySetting formatKeyRateOfFireModifierStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_RATE_OF_FIRE_MODIFIER);
+        [Tooltip("Format => {0} = {Amount * 100}")]
+        public UILocaleKeySetting formatKeyRateOfFireRateStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_RATE_OF_FIRE_MODIFIER_RATE);
         [Tooltip("Format => {0} = {Amount}")]
-        public UILocaleKeySetting formatKeyReloadDurationStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_RELOAD_DURATION);
+        public UILocaleKeySetting formatKeyReloadDurationModifierStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_RELOAD_DURATION_MODIFIER);
+        [Tooltip("Format => {0} = {Amount * 100}")]
+        public UILocaleKeySetting formatKeyReloadDurationRateStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_RELOAD_DURATION_MODIFIER_RATE);
+        [Tooltip("Format => {0} = {Amount}")]
+        public UILocaleKeySetting formatKeyFireSpreadRangeModifierStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_FIRE_SPREAD_RANGE_MODIFIER);
         [Tooltip("Format => {0} = {Amount * 100}")]
         public UILocaleKeySetting formatKeyFireSpreadRangeRateStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_FIRE_SPREAD_RANGE_RATE);
         [Tooltip("Format => {0} = {Amount}")]
-        public UILocaleKeySetting formatKeyFireSpreadStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_FIRE_SPREAD);
+        public UILocaleKeySetting formatKeyFireSpreadModifierStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_FIRE_SPREAD_MODIFIER);
+        [Tooltip("Format => {0} = {Amount * 100}")]
+        public UILocaleKeySetting formatKeyFireSpreadRateStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_FIRE_SPREAD_MODIFIER_RATE);
         [Tooltip("Format => {0} = {Amount}")]
         public UILocaleKeySetting formatKeyDecreaseFoodDecreationStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_DECREASE_FOOD_DECREATION);
         [Tooltip("Format => {0} = {Amount}")]
@@ -166,19 +186,37 @@ namespace MultiplayerARPG
         [Tooltip("Format => {0} = {Amount * 100}")]
         public UILocaleKeySetting formatKeyProtectedSlotLimitRateStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_PROTECTED_SLOT_LIMIT_RATE);
         [Tooltip("Format => {0} = {Amount * 100}")]
-        public UILocaleKeySetting formatKeyAmmoCapacityRateStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_AMMO_CAPACITY_RATE);
+        public UILocaleKeySetting formatKeyAmmoCapacityModifierRateStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_AMMO_CAPACITY_MODIFIER_RATE);
+        [Tooltip("Format => {0} = {Amount * 100}")]
+        public UILocaleKeySetting formatKeyAmmoCapacityRateRateStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_AMMO_CAPACITY_RATE_RATE);
         [Tooltip("Format => {0} = {Amount * 100}")]
         public UILocaleKeySetting formatKeyRecoilModifierRateStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_RECOIL_MODIFIER_RATE);
         [Tooltip("Format => {0} = {Amount * 100}")]
+        public UILocaleKeySetting formatKeyRecoilYawModifierRateStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_RECOIL_YAW_MODIFIER_RATE);
+        [Tooltip("Format => {0} = {Amount * 100}")]
+        public UILocaleKeySetting formatKeyRecoilRollModifierRateStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_RECOIL_ROLL_MODIFIER_RATE);
+        [Tooltip("Format => {0} = {Amount * 100}")]
         public UILocaleKeySetting formatKeyRecoilRateRateStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_RECOIL_RATE_RATE);
         [Tooltip("Format => {0} = {Amount * 100}")]
-        public UILocaleKeySetting formatKeyRateOfFireRateStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_RATE_OF_FIRE_RATE);
+        public UILocaleKeySetting formatKeyRecoilYawRateRateStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_RECOIL_YAW_RATE_RATE);
         [Tooltip("Format => {0} = {Amount * 100}")]
-        public UILocaleKeySetting formatKeyReloadDurationRateStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_RELOAD_DURATION_RATE);
+        public UILocaleKeySetting formatKeyRecoilRollRateRateStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_RECOIL_ROLL_RATE_RATE);
+        [Tooltip("Format => {0} = {Amount * 100}")]
+        public UILocaleKeySetting formatKeyRateOfFireModifierRateStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_RATE_OF_FIRE_MODIFIER_RATE);
+        [Tooltip("Format => {0} = {Amount * 100}")]
+        public UILocaleKeySetting formatKeyRateOfFireRateRateStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_RATE_OF_FIRE_RATE_RATE);
+        [Tooltip("Format => {0} = {Amount * 100}")]
+        public UILocaleKeySetting formatKeyReloadDurationModifierRateStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_RELOAD_DURATION_MODIFIER_RATE);
+        [Tooltip("Format => {0} = {Amount * 100}")]
+        public UILocaleKeySetting formatKeyReloadDurationRateRateStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_RELOAD_DURATION_RATE_RATE);
+        [Tooltip("Format => {0} = {Amount * 100}")]
+        public UILocaleKeySetting formatKeyFireSpreadRangeModifierRateStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_FIRE_SPREAD_RANGE_MODIFIER_RATE);
         [Tooltip("Format => {0} = {Amount * 100}")]
         public UILocaleKeySetting formatKeyFireSpreadRangeRateRateStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_FIRE_SPREAD_RANGE_RATE_RATE);
         [Tooltip("Format => {0} = {Amount * 100}")]
-        public UILocaleKeySetting formatKeyFireSpreadRateStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_FIRE_SPREAD_RATE);
+        public UILocaleKeySetting formatKeyFireSpreadModifierRateStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_FIRE_SPREAD_MODIFIER_RATE);
+        [Tooltip("Format => {0} = {Amount * 100}")]
+        public UILocaleKeySetting formatKeyFireSpreadRateRateStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_FIRE_SPREAD_RATE_RATE);
         [Tooltip("Format => {0} = {Amount * 100}")]
         public UILocaleKeySetting formatKeyDecreaseFoodDecreationRateStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_DECREASE_FOOD_DECREATION_RATE);
         [Tooltip("Format => {0} = {Amount * 100}")]
@@ -223,26 +261,30 @@ namespace MultiplayerARPG
         public TextWrapper uiTextFallDamageAbsorbs;
         public TextWrapper uiTextGravityRate;
         public TextWrapper uiTextProtectedSlotLimit;
-        public TextWrapper uiTextAmmoCapacity;
+        [FormerlySerializedAs("uiTextAmmoCapacity")]
+        public TextWrapper uiTextAmmoCapacityModifier;
+        public TextWrapper uiTextAmmoCapacityRate;
         public TextWrapper uiTextRecoilModifier;
+        public TextWrapper uiTextRecoilYawModifier;
+        public TextWrapper uiTextRecoilRollModifier;
         public TextWrapper uiTextRecoilRate;
-        public TextWrapper uiTextRateOfFire;
-        public TextWrapper uiTextReloadDuration;
+        public TextWrapper uiTextRecoilYawRate;
+        public TextWrapper uiTextRecoilRollRate;
+        [FormerlySerializedAs("uiTextRateOfFire")]
+        public TextWrapper uiTextRateOfFireModifier;
+        public TextWrapper uiTextRateOfFireRate;
+        [FormerlySerializedAs("uiTextReloadDuration")]
+        public TextWrapper uiTextReloadDurationModifier;
+        public TextWrapper uiTextReloadDurationRate;
+        [FormerlySerializedAs("uiTextFireSpreadRange")]
+        public TextWrapper uiTextFireSpreadRangeModifier;
         public TextWrapper uiTextFireSpreadRangeRate;
-        public TextWrapper uiTextFireSpread;
-        public TextWrapper uiTextNightVision;
-        public TextWrapper uiTextFlashLight;
+        [FormerlySerializedAs("uiTextFireSpread")]
+        public TextWrapper uiTextFireSpreadModifier;
+        public TextWrapper uiTextFireSpreadRate;
         public TextWrapper uiTextDecreaseFoodDecreation;
         public TextWrapper uiTextDecreaseWaterDecreation;
         public TextWrapper uiTextDecreaseStaminaDecreation;
-        public TextWrapper uiTextIncreaseDamageType1;
-        public TextWrapper uiTextIncreaseDamageType2;
-        public TextWrapper uiTextIncreaseDamageType3;
-        public TextWrapper uiTextIncreaseDamageType4;
-        public TextWrapper uiTextAtkSpeedType1;
-        public TextWrapper uiTextAtkSpeedType2;
-        public TextWrapper uiTextAtkSpeedType3;
-        public TextWrapper uiTextAtkSpeedType4;
         public TextWrapper uiTextBuyItemPriceRate;
         public TextWrapper uiTextSellItemPriceRate;
         public DisplayType displayType;
@@ -289,26 +331,25 @@ namespace MultiplayerARPG
             uiTextFallDamageAbsorbs = null;
             uiTextGravityRate = null;
             uiTextProtectedSlotLimit = null;
-            uiTextAmmoCapacity = null;
+            uiTextAmmoCapacityModifier = null;
+            uiTextAmmoCapacityRate = null;
             uiTextRecoilModifier = null;
+            uiTextRecoilYawModifier = null;
+            uiTextRecoilRollModifier = null;
             uiTextRecoilRate = null;
-            uiTextRateOfFire = null;
-            uiTextReloadDuration = null;
+            uiTextRecoilYawRate = null;
+            uiTextRecoilRollRate = null;
+            uiTextRateOfFireModifier = null;
+            uiTextRateOfFireRate = null;
+            uiTextReloadDurationModifier = null;
+            uiTextReloadDurationRate = null;
+            uiTextFireSpreadRangeModifier = null;
             uiTextFireSpreadRangeRate = null;
-            uiTextFireSpread = null;
-            uiTextNightVision = null;
-            uiTextFlashLight = null;
+            uiTextFireSpreadModifier = null;
+            uiTextFireSpreadRate = null;
             uiTextDecreaseFoodDecreation = null;
             uiTextDecreaseWaterDecreation = null;
             uiTextDecreaseStaminaDecreation = null;
-            uiTextIncreaseDamageType1 = null;
-            uiTextIncreaseDamageType2 = null;
-            uiTextIncreaseDamageType3 = null;
-            uiTextIncreaseDamageType4 = null;
-            uiTextAtkSpeedType1 = null;
-            uiTextAtkSpeedType2 = null;
-            uiTextAtkSpeedType3 = null;
-            uiTextAtkSpeedType4 = null;
             uiTextBuyItemPriceRate = null;
             uiTextSellItemPriceRate = null;
         }
@@ -381,13 +422,20 @@ namespace MultiplayerARPG
                         fallDamageAbsorbsStatsFormat = formatKeyFallDamageAbsorbsRateStats,
                         gravityRateStatsFormat = formatKeyGravityRateRateStats,
                         protectedSlotLimitFormat = formatKeyProtectedSlotLimitRateStats,
-                        ammoCapacityFormat = formatKeyAmmoCapacityRateStats,
+                        ammoCapacityModifierFormat = formatKeyAmmoCapacityModifierRateStats,
+                        ammoCapacityRateFormat = formatKeyAmmoCapacityRateRateStats,
                         recoilModifierFormat = formatKeyRecoilModifierRateStats,
+                        recoilYawModifierFormat = formatKeyRecoilYawModifierRateStats,
+                        recoilRollModifierFormat = formatKeyRecoilRollModifierRateStats,
                         recoilRateFormat = formatKeyRecoilRateRateStats,
-                        rateOfFireFormat = formatKeyRateOfFireRateStats,
-                        reloadDurationFormat = formatKeyReloadDurationRateStats,
+                        rateOfFireModifierFormat = formatKeyRateOfFireModifierRateStats,
+                        rateOfFireRateFormat = formatKeyRateOfFireRateRateStats,
+                        reloadDurationModifierFormat = formatKeyReloadDurationModifierRateStats,
+                        reloadDurationRateFormat = formatKeyReloadDurationRateRateStats,
+                        fireSpreadRangeModifierFormat = formatKeyFireSpreadRangeModifierRateStats,
                         fireSpreadRangeRateFormat = formatKeyFireSpreadRangeRateRateStats,
-                        fireSpreadFormat = formatKeyFireSpreadRateStats,
+                        fireSpreadModifierFormat = formatKeyFireSpreadModifierRateStats,
+                        fireSpreadRateFormat = formatKeyFireSpreadRateRateStats,
                         decreaseFoodDecreationFormat = formatKeyDecreaseFoodDecreationRateStats,
                         decreaseWaterDecreationFormat = formatKeyDecreaseWaterDecreationRateStats,
                         decreaseStaminaDecreationFormat = formatKeyDecreaseStaminaDecreationRateStats,
@@ -424,13 +472,17 @@ namespace MultiplayerARPG
                         uiTextFallDamageAbsorbs = uiTextFallDamageAbsorbs,
                         uiTextGravityRate = uiTextGravityRate,
                         uiTextProtectedSlotLimit = uiTextProtectedSlotLimit,
-                        uiTextAmmoCapacity = uiTextAmmoCapacity,
+                        uiTextAmmoCapacityModifier = uiTextAmmoCapacityModifier,
                         uiTextRecoilModifier = uiTextRecoilModifier,
+                        uiTextRecoilYawModifier = uiTextRecoilYawModifier,
+                        uiTextRecoilRollModifier = uiTextRecoilRollModifier,
                         uiTextRecoilRate = uiTextRecoilRate,
-                        uiTextRateOfFire = uiTextRateOfFire,
-                        uiTextReloadDuration = uiTextReloadDuration,
+                        uiTextRecoilYawRate = uiTextRecoilYawRate,
+                        uiTextRecoilRollRate = uiTextRecoilRollRate,
+                        uiTextRateOfFireModifier = uiTextRateOfFireModifier,
+                        uiTextReloadDurationModifier = uiTextReloadDurationModifier,
                         uiTextFireSpreadRangeRate = uiTextFireSpreadRangeRate,
-                        uiTextFireSpread = uiTextFireSpread,
+                        uiTextFireSpreadModifier = uiTextFireSpreadModifier,
                         uiTextDecreaseFoodDecreation = uiTextDecreaseFoodDecreation,
                         uiTextDecreaseWaterDecreation = uiTextDecreaseWaterDecreation,
                         uiTextDecreaseStaminaDecreation = uiTextDecreaseStaminaDecreation,
@@ -479,13 +531,20 @@ namespace MultiplayerARPG
                         fallDamageAbsorbsStatsFormat = formatKeyFallDamageAbsorbsStats,
                         gravityRateStatsFormat = formatKeyGravityRateStats,
                         protectedSlotLimitFormat = formatKeyProtectedSlotLimitStats,
-                        ammoCapacityFormat = formatKeyAmmoCapacityStats,
+                        ammoCapacityModifierFormat = formatKeyAmmoCapacityModifierStats,
+                        ammoCapacityRateFormat = formatKeyAmmoCapacityRateStats,
                         recoilModifierFormat = formatKeyRecoilModifierStats,
+                        recoilYawModifierFormat = formatKeyRecoilYawModifierStats,
+                        recoilRollModifierFormat = formatKeyRecoilRollModifierStats,
                         recoilRateFormat = formatKeyRecoilRateStats,
-                        rateOfFireFormat = formatKeyRateOfFireStats,
-                        reloadDurationFormat = formatKeyReloadDurationStats,
+                        rateOfFireModifierFormat = formatKeyRateOfFireModifierStats,
+                        rateOfFireRateFormat = formatKeyRateOfFireRateStats,
+                        reloadDurationModifierFormat = formatKeyReloadDurationModifierStats,
+                        reloadDurationRateFormat = formatKeyReloadDurationRateStats,
+                        fireSpreadRangeModifierFormat = formatKeyFireSpreadRangeModifierStats,
                         fireSpreadRangeRateFormat = formatKeyFireSpreadRangeRateStats,
-                        fireSpreadFormat = formatKeyFireSpreadStats,
+                        fireSpreadModifierFormat = formatKeyFireSpreadModifierStats,
+                        fireSpreadRateFormat = formatKeyFireSpreadRateStats,
                         decreaseFoodDecreationFormat = formatKeyDecreaseFoodDecreationStats,
                         decreaseWaterDecreationFormat = formatKeyDecreaseWaterDecreationStats,
                         decreaseStaminaDecreationFormat = formatKeyDecreaseStaminaDecreationStats,
@@ -522,13 +581,22 @@ namespace MultiplayerARPG
                         uiTextFallDamageAbsorbs = uiTextFallDamageAbsorbs,
                         uiTextGravityRate = uiTextGravityRate,
                         uiTextProtectedSlotLimit = uiTextProtectedSlotLimit,
-                        uiTextAmmoCapacity = uiTextAmmoCapacity,
+                        uiTextAmmoCapacityModifier = uiTextAmmoCapacityModifier,
+                        uiTextAmmoCapacityRate = uiTextAmmoCapacityRate,
                         uiTextRecoilModifier = uiTextRecoilModifier,
+                        uiTextRecoilYawModifier = uiTextRecoilYawModifier,
+                        uiTextRecoilRollModifier = uiTextRecoilRollModifier,
                         uiTextRecoilRate = uiTextRecoilRate,
-                        uiTextRateOfFire = uiTextRateOfFire,
-                        uiTextReloadDuration = uiTextReloadDuration,
+                        uiTextRecoilYawRate = uiTextRecoilYawRate,
+                        uiTextRecoilRollRate = uiTextRecoilRollRate,
+                        uiTextRateOfFireModifier = uiTextRateOfFireModifier,
+                        uiTextRateOfFireRate = uiTextRateOfFireRate,
+                        uiTextReloadDurationModifier = uiTextReloadDurationModifier,
+                        uiTextReloadDurationRate = uiTextReloadDurationRate,
+                        uiTextFireSpreadRangeModifier = uiTextFireSpreadRangeModifier,
                         uiTextFireSpreadRangeRate = uiTextFireSpreadRangeRate,
-                        uiTextFireSpread = uiTextFireSpread,
+                        uiTextFireSpreadModifier = uiTextFireSpreadModifier,
+                        uiTextFireSpreadRate = uiTextFireSpreadRate,
                         uiTextDecreaseFoodDecreation = uiTextDecreaseFoodDecreation,
                         uiTextDecreaseWaterDecreation = uiTextDecreaseWaterDecreation,
                         uiTextDecreaseStaminaDecreation = uiTextDecreaseStaminaDecreation,
@@ -583,12 +651,22 @@ namespace MultiplayerARPG
             formatKeyFallDamageAbsorbsStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_SIMPLE);
             formatKeyGravityRateStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_SIMPLE_PERCENTAGE);
             formatKeyProtectedSlotLimitStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_SIMPLE);
-            formatKeyAmmoCapacityStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_SIMPLE);
+            formatKeyAmmoCapacityModifierStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_SIMPLE);
+            formatKeyAmmoCapacityRateStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_SIMPLE_PERCENTAGE);
+            formatKeyRecoilModifierStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_SIMPLE);
+            formatKeyRecoilYawModifierStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_SIMPLE);
+            formatKeyRecoilRollModifierStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_SIMPLE);
             formatKeyRecoilRateStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_SIMPLE_PERCENTAGE);
-            formatKeyRateOfFireStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_SIMPLE);
-            formatKeyReloadDurationStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_SIMPLE);
+            formatKeyRecoilYawRateStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_SIMPLE_PERCENTAGE);
+            formatKeyRecoilRollRateStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_SIMPLE_PERCENTAGE);
+            formatKeyRateOfFireModifierStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_SIMPLE);
+            formatKeyRateOfFireRateStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_SIMPLE_PERCENTAGE);
+            formatKeyReloadDurationModifierStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_SIMPLE);
+            formatKeyReloadDurationRateStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_SIMPLE_PERCENTAGE);
+            formatKeyFireSpreadRangeModifierStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_SIMPLE);
             formatKeyFireSpreadRangeRateStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_SIMPLE_PERCENTAGE);
-            formatKeyFireSpreadStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_SIMPLE);
+            formatKeyFireSpreadModifierStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_SIMPLE);
+            formatKeyFireSpreadRateStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_SIMPLE_PERCENTAGE);
             formatKeyDecreaseFoodDecreationStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_SIMPLE);
             formatKeyDecreaseWaterDecreationStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_SIMPLE);
             formatKeyDecreaseStaminaDecreationStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_SIMPLE);
@@ -626,12 +704,22 @@ namespace MultiplayerARPG
             formatKeyFallDamageAbsorbsRateStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_SIMPLE_PERCENTAGE);
             formatKeyGravityRateRateStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_SIMPLE_PERCENTAGE);
             formatKeyProtectedSlotLimitRateStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_SIMPLE_PERCENTAGE);
-            formatKeyAmmoCapacityRateStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_SIMPLE_PERCENTAGE);
+            formatKeyAmmoCapacityModifierRateStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_SIMPLE_PERCENTAGE);
+            formatKeyAmmoCapacityRateRateStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_SIMPLE_PERCENTAGE);
+            formatKeyRecoilModifierRateStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_SIMPLE_PERCENTAGE);
+            formatKeyRecoilYawModifierRateStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_SIMPLE_PERCENTAGE);
+            formatKeyRecoilRollModifierRateStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_SIMPLE_PERCENTAGE);
             formatKeyRecoilRateRateStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_SIMPLE_PERCENTAGE);
-            formatKeyRateOfFireRateStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_SIMPLE_PERCENTAGE);
-            formatKeyReloadDurationRateStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_SIMPLE_PERCENTAGE);
+            formatKeyRecoilYawRateRateStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_SIMPLE_PERCENTAGE);
+            formatKeyRecoilRollRateRateStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_SIMPLE_PERCENTAGE);
+            formatKeyRateOfFireModifierRateStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_SIMPLE_PERCENTAGE);
+            formatKeyRateOfFireRateRateStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_SIMPLE_PERCENTAGE);
+            formatKeyReloadDurationModifierRateStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_SIMPLE_PERCENTAGE);
+            formatKeyReloadDurationRateRateStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_SIMPLE_PERCENTAGE);
+            formatKeyFireSpreadRangeModifierRateStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_SIMPLE_PERCENTAGE);
             formatKeyFireSpreadRangeRateRateStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_SIMPLE_PERCENTAGE);
-            formatKeyFireSpreadRateStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_SIMPLE_PERCENTAGE);
+            formatKeyFireSpreadModifierRateStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_SIMPLE_PERCENTAGE);
+            formatKeyFireSpreadRateRateStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_SIMPLE_PERCENTAGE);
             formatKeyDecreaseFoodDecreationRateStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_SIMPLE_PERCENTAGE);
             formatKeyDecreaseWaterDecreationRateStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_SIMPLE_PERCENTAGE);
             formatKeyDecreaseStaminaDecreationRateStats = new UILocaleKeySetting(UIFormatKeys.UI_FORMAT_SIMPLE_PERCENTAGE);

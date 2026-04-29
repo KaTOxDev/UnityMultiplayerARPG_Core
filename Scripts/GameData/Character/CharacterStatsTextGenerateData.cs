@@ -42,13 +42,22 @@ namespace MultiplayerARPG
         public string fallDamageAbsorbsStatsFormat;
         public string gravityRateStatsFormat;
         public string protectedSlotLimitFormat;
-        public string ammoCapacityFormat;
+        public string ammoCapacityModifierFormat;
+        public string ammoCapacityRateFormat;
         public string recoilModifierFormat;
+        public string recoilYawModifierFormat;
+        public string recoilRollModifierFormat;
         public string recoilRateFormat;
-        public string rateOfFireFormat;
-        public string reloadDurationFormat;
+        public string recoilYawRateFormat;
+        public string recoilRollRateFormat;
+        public string rateOfFireModifierFormat;
+        public string rateOfFireRateFormat;
+        public string reloadDurationModifierFormat;
+        public string reloadDurationRateFormat;
+        public string fireSpreadRangeModifierFormat;
         public string fireSpreadRangeRateFormat;
-        public string fireSpreadFormat;
+        public string fireSpreadModifierFormat;
+        public string fireSpreadRateFormat;
         public string decreaseFoodDecreationFormat;
         public string decreaseWaterDecreationFormat;
         public string decreaseStaminaDecreationFormat;
@@ -85,13 +94,22 @@ namespace MultiplayerARPG
         public TextWrapper uiTextFallDamageAbsorbs;
         public TextWrapper uiTextGravityRate;
         public TextWrapper uiTextProtectedSlotLimit;
-        public TextWrapper uiTextAmmoCapacity;
+        public TextWrapper uiTextAmmoCapacityModifier;
+        public TextWrapper uiTextAmmoCapacityRate;
         public TextWrapper uiTextRecoilModifier;
+        public TextWrapper uiTextRecoilYawModifier;
+        public TextWrapper uiTextRecoilRollModifier;
         public TextWrapper uiTextRecoilRate;
-        public TextWrapper uiTextRateOfFire;
-        public TextWrapper uiTextReloadDuration;
+        public TextWrapper uiTextRecoilYawRate;
+        public TextWrapper uiTextRecoilRollRate;
+        public TextWrapper uiTextRateOfFireModifier;
+        public TextWrapper uiTextRateOfFireRate;
+        public TextWrapper uiTextReloadDurationModifier;
+        public TextWrapper uiTextReloadDurationRate;
+        public TextWrapper uiTextFireSpreadRangeModifier;
         public TextWrapper uiTextFireSpreadRangeRate;
-        public TextWrapper uiTextFireSpread;
+        public TextWrapper uiTextFireSpreadModifier;
+        public TextWrapper uiTextFireSpreadRate;
         public TextWrapper uiTextDecreaseFoodDecreation;
         public TextWrapper uiTextDecreaseWaterDecreation;
         public TextWrapper uiTextDecreaseStaminaDecreation;
@@ -198,25 +216,52 @@ namespace MultiplayerARPG
             GetSingleStatsText(statsStringBuilder, false, LanguageManager.GetText(protectedSlotLimitFormat), data.protectedSlotLimit, uiTextProtectedSlotLimit, bonusIncreaseColor, bonusDecreaseColor);
 
             // Ammo Capacity
-            GetSingleStatsText(statsStringBuilder, false, LanguageManager.GetText(ammoCapacityFormat), data.ammoCapacity, uiTextAmmoCapacity, bonusIncreaseColor, bonusDecreaseColor);
+            GetSingleStatsText(statsStringBuilder, false, LanguageManager.GetText(ammoCapacityModifierFormat), data.ammoCapacityModifier, uiTextAmmoCapacityModifier, bonusIncreaseColor, bonusDecreaseColor);
+
+            // Ammo Capacity Rate
+            GetSingleStatsText(statsStringBuilder, false, LanguageManager.GetText(ammoCapacityRateFormat), data.ammoCapacityRate, uiTextAmmoCapacityRate, bonusIncreaseColor, bonusDecreaseColor);
 
             // Recoil Modifier
             GetSingleStatsText(statsStringBuilder, true, LanguageManager.GetText(recoilModifierFormat), data.recoilModifier, uiTextRecoilModifier, bonusIncreaseColor, bonusDecreaseColor);
 
+            // Recoil Yaw Modifier
+            GetSingleStatsText(statsStringBuilder, true, LanguageManager.GetText(recoilYawModifierFormat), data.recoilYawModifier, uiTextRecoilYawModifier, bonusIncreaseColor, bonusDecreaseColor);
+
+            // Recoil Roll Modifier
+            GetSingleStatsText(statsStringBuilder, true, LanguageManager.GetText(recoilRollModifierFormat), data.recoilRollModifier, uiTextRecoilRollModifier, bonusIncreaseColor, bonusDecreaseColor);
+
             // Recoil Rate
             GetSingleStatsText(statsStringBuilder, true, LanguageManager.GetText(recoilRateFormat), data.recoilRate, uiTextRecoilRate, bonusIncreaseColor, bonusDecreaseColor);
 
+            // Recoil Yaw Rate
+            GetSingleStatsText(statsStringBuilder, true, LanguageManager.GetText(recoilYawRateFormat), data.recoilYawRate, uiTextRecoilYawRate, bonusIncreaseColor, bonusDecreaseColor);
+
+            // Recoil Roll Rate
+            GetSingleStatsText(statsStringBuilder, true, LanguageManager.GetText(recoilRollRateFormat), data.recoilRollRate, uiTextRecoilRollRate, bonusIncreaseColor, bonusDecreaseColor);
+
             // Rate Of Fire
-            GetSingleStatsText(statsStringBuilder, false, LanguageManager.GetText(rateOfFireFormat), data.rateOfFire, uiTextRateOfFire, bonusIncreaseColor, bonusDecreaseColor);
+            GetSingleStatsText(statsStringBuilder, false, LanguageManager.GetText(rateOfFireModifierFormat), data.rateOfFireModifier, uiTextRateOfFireModifier, bonusIncreaseColor, bonusDecreaseColor);
+
+            // Rate Of Fire Rate
+            GetSingleStatsText(statsStringBuilder, false, LanguageManager.GetText(rateOfFireRateFormat), data.rateOfFireRate, uiTextRateOfFireRate, bonusIncreaseColor, bonusDecreaseColor);
 
             // Reload Duration
-            GetSingleStatsText(statsStringBuilder, false, LanguageManager.GetText(reloadDurationFormat), data.reloadDuration, uiTextReloadDuration, bonusIncreaseColor, bonusDecreaseColor);
+            GetSingleStatsText(statsStringBuilder, false, LanguageManager.GetText(reloadDurationModifierFormat), data.reloadDurationModifier, uiTextReloadDurationModifier, bonusIncreaseColor, bonusDecreaseColor);
+
+            // Reload Duration Rate
+            GetSingleStatsText(statsStringBuilder, false, LanguageManager.GetText(reloadDurationRateFormat), data.reloadDurationRate, uiTextReloadDurationRate, bonusIncreaseColor, bonusDecreaseColor);
+
+            // Fire Spread Range
+            GetSingleStatsText(statsStringBuilder, true, LanguageManager.GetText(fireSpreadRangeModifierFormat), data.fireSpreadRangeModifier, uiTextFireSpreadRangeModifier, bonusIncreaseColor, bonusDecreaseColor);
 
             // Fire Spread Range Rate
             GetSingleStatsText(statsStringBuilder, true, LanguageManager.GetText(fireSpreadRangeRateFormat), data.fireSpreadRangeRate, uiTextFireSpreadRangeRate, bonusIncreaseColor, bonusDecreaseColor);
 
             // Fire Spread
-            GetSingleStatsText(statsStringBuilder, false, LanguageManager.GetText(fireSpreadFormat), data.fireSpread, uiTextFireSpread, bonusIncreaseColor, bonusDecreaseColor);
+            GetSingleStatsText(statsStringBuilder, false, LanguageManager.GetText(fireSpreadModifierFormat), data.fireSpreadModifier, uiTextFireSpreadModifier, bonusIncreaseColor, bonusDecreaseColor);
+
+            // Fire Spread Rate
+            GetSingleStatsText(statsStringBuilder, false, LanguageManager.GetText(fireSpreadRateFormat), data.fireSpreadRate, uiTextFireSpreadRate, bonusIncreaseColor, bonusDecreaseColor);
 
             // Decrease Food Decreation
             GetSingleStatsText(statsStringBuilder, false, LanguageManager.GetText(decreaseFoodDecreationFormat), data.decreaseFoodDecreation, uiTextDecreaseFoodDecreation, bonusIncreaseColor, bonusDecreaseColor);
@@ -285,14 +330,22 @@ namespace MultiplayerARPG
             // Set the text component if it's provided
             if (textComponent != null)
             {
-                if (isBonus)
+                if (value != 0f)
                 {
-                    if (value >= 0)
-                        textComponent.color = bonusIncreaseColor;
-                    else
-                        textComponent.color = bonusDecreaseColor;
+                    if (isBonus)
+                    {
+                        if (value >= 0)
+                            textComponent.color = bonusIncreaseColor;
+                        else
+                            textComponent.color = bonusDecreaseColor;
+                    }
+                    textComponent.text = statsStringPart;
+                    textComponent.SetGameObjectActive(true);
                 }
-                textComponent.text = statsStringPart;
+                else
+                {
+                    textComponent.SetGameObjectActive(false);
+                }
             }
         }
 

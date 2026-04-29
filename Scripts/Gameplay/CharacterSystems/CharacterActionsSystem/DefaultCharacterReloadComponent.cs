@@ -103,7 +103,7 @@ namespace MultiplayerARPG
             float overrideDuration = 0f;
             if (weaponItem.ReloadDuration > 0f)
                 totalDuration = overrideDuration = weaponItem.ReloadDuration;
-            float changedDuration = Entity.CachedData.ReloadDuration;
+            float changedDuration = Entity.CachedData.ReloadDurationModifier + (Entity.CachedData.ReloadDurationRate * totalDuration);
 
             // Calculate move speed rate while doing action at clients and server
             MoveSpeedRateWhileReloading = Entity.GetMoveSpeedRateWhileReloading(weaponItem);
@@ -362,7 +362,7 @@ namespace MultiplayerARPG
                 // Override capacity by the item
                 ammoCapacity = ammoItem.OverrideAmmoCapacity;
             }
-            ammoCapacity += Mathf.CeilToInt(Entity.CachedData.AmmoCapacity);
+            ammoCapacity += Mathf.CeilToInt(Entity.CachedData.AmmoCapacityModifier);
 
             int reloadingAmmoAmount = 0;
             if (!reloadingWeaponItem.NoAmmoDataIdChange && reloadingWeapon.ammoDataId != reloadingAmmoDataId)
