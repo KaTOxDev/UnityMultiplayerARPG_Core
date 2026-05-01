@@ -44,20 +44,21 @@ namespace MultiplayerARPG
             AnimatorHandle srcAnimatorHandle = src.gameObject.GetOrAddComponent<AnimatorHandle>();
             AnimatorHandle dstAnimatorHandle = dst.gameObject.GetOrAddComponent<AnimatorHandle>();
 
-            List<Transform> srcTransforms = new List<Transform>();
-            List<Transform> dstTransforms = new List<Transform>();
-
-            for (HumanBodyBones i = 0; i < HumanBodyBones.LastBone; ++i)
+            int length = (int)HumanBodyBones.LastBone;
+            Transform[] srcTransforms = new Transform[length];
+            Transform[] dstTransforms = new Transform[length];
+            for (int i = 0; i < length; ++i)
             {
+                HumanBodyBones bone = (HumanBodyBones)i;
                 // Add all bones althrough it is null
-                Transform srcTransform = src.GetBoneTransform(i);
-                srcTransforms.Add(srcTransform);
+                Transform srcTransform = src.GetBoneTransform(bone);
+                srcTransforms[i] = srcTransform;
 
                 // Priority: predefined bones > bones from dst animator
                 Transform dstTransform;
-                if (!PredefinedBonesDict.TryGetValue(i, out dstTransform))
-                    dstTransform = dst.GetBoneTransform(i);
-                dstTransforms.Add(dstTransform);
+                if (!PredefinedBonesDict.TryGetValue(bone, out dstTransform))
+                    dstTransform = dst.GetBoneTransform(bone);
+                dstTransforms[i] = dstTransform;
             }
 
             EquipmentModelBonesSetupByHumanBodyBonesUpdateManager.Instance.Register(srcAnimatorHandle, srcTransforms, dstAnimatorHandle, dstTransforms);

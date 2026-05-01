@@ -20,21 +20,13 @@ namespace MultiplayerARPG
             {
                 hideFlags = HideFlags.DontSave,
             };
-#if UNITY_EDITOR
-            if (!Application.isPlaying)
-            {
-                gameObject.hideFlags = HideFlags.HideAndDontSave;
-            }
-            else
-#endif
-            {
-                DontDestroyOnLoad(gameObject);
-            }
             return gameObject.AddComponent<EquipmentModelBonesSetupByHumanBodyBonesUpdateManager>();
         }
 
-        private readonly Dictionary<int, List<Transform>> _allSrc = new Dictionary<int, List<Transform>>();
-        private readonly Dictionary<int, NativeList<TransformData>> _allNSrc = new Dictionary<int, NativeList<TransformData>>();
+        [Tooltip("0 = not null, 1 = null")]
+        public byte copyScale = 0;
+        private readonly Dictionary<int, Transform[]> _allSrc = new Dictionary<int, Transform[]>();
+        private readonly Dictionary<int, NativeArray<TransformData>> _allNSrc = new Dictionary<int, NativeArray<TransformData>>();
         private readonly Dictionary<int, DstData> _allDst = new Dictionary<int, DstData>();
         private readonly HashSet<int> _destroyedSrcIds = new HashSet<int>();
         private readonly HashSet<int> _destroyedDstIds = new HashSet<int>();
@@ -46,15 +38,34 @@ namespace MultiplayerARPG
             _instance = null;
         }
 
+        private void Awake()
+        {
+            _instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+
         private void OnDestroy()
         {
             _jobHandle.Complete();
 
+            foreach (var kv in _allNSrc)
+            {
+                if (kv.Value.IsCreated)
+                    kv.Value.Dispose();
+            }
+
+            foreach (var kv in _allDst)
+            {
+                if (kv.Value.dstArray.isCreated)
+                    kv.Value.dstArray.Dispose();
+            }
+
+            _allNSrc.Clear();
             _allSrc.Clear();
             _allDst.Clear();
         }
 
-        public void Register(AnimatorHandle srcHandle, List<Transform> src, AnimatorHandle dstHandle, List<Transform> dst)
+        public void Register(AnimatorHandle srcHandle, Transform[] src, AnimatorHandle dstHandle, Transform[] dst)
         {
             if (srcHandle == null)
                 return;
@@ -67,16 +78,12 @@ namespace MultiplayerARPG
             _allSrc[srcHandle.Id] = src;
             if (!_allNSrc.ContainsKey(srcHandle.Id))
             {
-                NativeList<TransformData> srcNList = new NativeList<TransformData>(src.Count, Allocator.Persistent);
+                NativeArray<TransformData> srcNList = new NativeArray<TransformData>(src.Length, Allocator.Persistent);
                 _allNSrc[srcHandle.Id] = srcNList;
             }
             if (!_allDst.ContainsKey(dstHandle.Id))
             {
-                TransformAccessArray dstTransforms = new TransformAccessArray(dst.Count);
-                foreach (Transform dstTransform in dst)
-                {
-                    dstTransforms.Add(dstTransform);
-                }
+                TransformAccessArray dstTransforms = new TransformAccessArray(dst);
                 _allDst[dstHandle.Id] = new DstData()
                 {
                     dstArray = dstTransforms,
@@ -103,7 +110,7 @@ namespace MultiplayerARPG
             // Remove destroyed sources
             foreach (int id in _destroyedSrcIds)
             {
-                if (_allNSrc.TryGetValue(id, out NativeList<TransformData> srcNList))
+                if (_allNSrc.TryGetValue(id, out NativeArray<TransformData> srcNList))
                 {
                     if (srcNList.IsCreated)
                         srcNList.Dispose();
@@ -126,80 +133,88 @@ namespace MultiplayerARPG
             }
             _destroyedDstIds.Clear();
 
-            foreach (KeyValuePair<int, List<Transform>> srcKvp in _allSrc)
+            foreach (KeyValuePair<int, Transform[]> srcKvp in _allSrc)
             {
                 int srcId = srcKvp.Key;
-                if (!_allNSrc.TryGetValue(srcId, out NativeList<TransformData> srcNList))
+                if (!_allNSrc.TryGetValue(srcId, out NativeArray<TransformData> srcNList))
                     continue;
-                srcNList.Clear();
-                List<Transform> srcTransforms = srcKvp.Value;
-                for (int i = 0; i < srcTransforms.Count; ++i)
+                Transform[] srcTransforms = srcKvp.Value;
+                for (int i = 0; i < srcTransforms.Length; ++i)
                 {
                     Transform srcTransform = srcTransforms[i];
+                    TransformData transformData = default;
                     if (srcTransform != null)
                     {
-                        srcNList.Add(new TransformData()
-                        {
-                            isNull = false,
-                            position = srcTransform.position,
-                            rotation = srcTransform.rotation,
-                            localScale = srcTransform.localScale,
-                        });
+                        transformData.isNull = 0;
+                        transformData.position = srcTransform.position;
+                        transformData.rotation = srcTransform.rotation;
+                        transformData.localScale = srcTransform.localScale;
                     }
                     else
                     {
-                        srcNList.Add(new TransformData()
-                        {
-                            isNull = true,
-                            position = float3.zero,
-                            rotation = quaternion.identity,
-                            localScale = float3.zero,
-                        });
+                        transformData.isNull = 1;
                     }
+                    srcNList[i] = transformData;
                 }
             }
-
+            JobHandle combinedHandle = default;
+            bool hasJob = false;
             foreach (KeyValuePair<int, DstData> dstKvp in _allDst)
             {
-                if (!_allNSrc.TryGetValue(dstKvp.Value.srcId, out NativeList<TransformData> srcNList))
+                if (!_allNSrc.TryGetValue(dstKvp.Value.srcId, out NativeArray<TransformData> srcNList))
                     continue;
                 // Schedule ONE big job
                 CopyTransformsJob job = new CopyTransformsJob
                 {
                     sourceTransforms = srcNList,
+                    copyScale = copyScale,
                 };
-                _jobHandle = job.Schedule(dstKvp.Value.dstArray, _jobHandle);
+                JobHandle handle = job.Schedule(dstKvp.Value.dstArray);
+                combinedHandle = hasJob
+                    ? JobHandle.CombineDependencies(combinedHandle, handle)
+                    : handle;
+                hasJob = true;
             }
+            _jobHandle = combinedHandle;
         }
 
         [BurstCompile]
         private struct CopyTransformsJob : IJobParallelForTransform
         {
             [ReadOnly]
-            public NativeList<TransformData> sourceTransforms;
+            public NativeArray<TransformData> sourceTransforms;
+            [ReadOnly]
+            public byte copyScale;
 
             public void Execute(int index, TransformAccess destination)
             {
                 if (!destination.isValid)
                     return;
 
+                if (index >= sourceTransforms.Length)
+                    return;
+
                 TransformData source = sourceTransforms[index];
-                if (source.isNull)
+                if (source.isNull == 1)
                     return;
 
                 destination.position = source.position;
                 destination.rotation = source.rotation;
-                destination.localScale = source.localScale;
+                if (copyScale == 1)
+                    destination.localScale = source.localScale;
             }
         }
 
         [BurstCompile]
         private struct TransformData
         {
-            public bool isNull;
             public float3 position;
             public quaternion rotation;
             public float3 localScale;
+            /// <summary>
+            /// 0 = not null, 1 = null
+            /// </summary>
+            public byte isNull;
         }
 
         [BurstCompile]
