@@ -1003,7 +1003,7 @@ namespace MultiplayerARPG
         {
             _turnToTargetActionType = TargetActionType.Attack;
             _turnToTargetPosition = null;
-            SelectedEntity = entity;
+            TargetEntity = entity;
         }
 
         protected void TurnCharacterToPositionToAttack(Vector3 position)
@@ -1016,7 +1016,7 @@ namespace MultiplayerARPG
         {
             _turnToTargetActionType = TargetActionType.UseSkill;
             _turnToTargetPosition = null;
-            SelectedEntity = entity;
+            TargetEntity = entity;
         }
 
         protected void TurnCharacterToPositionToUsePendingSkill(Vector3 position)
