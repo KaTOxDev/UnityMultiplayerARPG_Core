@@ -737,7 +737,6 @@ namespace MultiplayerARPG
                     continue;
                 }
 
-
                 string equipSocket = tempModel.equipSocket;
                 if (isSheathModels)
                 {
