@@ -249,14 +249,22 @@ namespace MultiplayerARPG
             Functions.EntityStart();
         }
 
+        public override void OnSetOwnerClient(bool isOwnerClient)
+        {
+            Functions.OnSetOwnerClient(isOwnerClient);
+            CacheCharacterController.enabled = Functions.CanSimulateMovement();
+        }
+
         private void OnEnable()
         {
             Functions.ComponentEnabled();
+            CacheCharacterController.enabled = Functions.CanSimulateMovement();
             UpdateManager.Register(this);
         }
 
         private void OnDisable()
         {
+            CacheCharacterController.enabled = false;
             UpdateManager.Unregister(this);
         }
 
@@ -268,11 +276,6 @@ namespace MultiplayerARPG
         public override void OnNetworkDestroy(byte reasons)
         {
             Functions.OnNetworkDestroy(reasons);
-        }
-
-        public override void OnSetOwnerClient(bool isOwnerClient)
-        {
-            Functions.OnSetOwnerClient(isOwnerClient);
         }
 
         private void OnAnimatorMove()
@@ -451,9 +454,16 @@ namespace MultiplayerARPG
 
         public void SetPosition(Vector3 position)
         {
-            CacheCharacterController.enabled = false;
-            EntityTransform.position = position;
-            CacheCharacterController.enabled = true;
+            if (Functions.CanSimulateMovement())
+            {
+                CacheCharacterController.enabled = false;
+                EntityTransform.position = position;
+                CacheCharacterController.enabled = true;
+            }
+            else
+            {
+                EntityTransform.position = position;
+            }
         }
 
         public Bounds GetMovementBounds()
@@ -463,7 +473,14 @@ namespace MultiplayerARPG
 
         public void Move(MovementState movementState, ExtraMovementState extraMovementState, Vector3 motion, float deltaTime)
         {
-            CacheCharacterController.Move(AdjustCrawlMotion(movementState, extraMovementState, motion));
+            if (Functions.CanSimulateMovement())
+            {
+                CacheCharacterController.Move(AdjustCrawlMotion(movementState, extraMovementState, motion));
+            }
+            else
+            {
+                EntityTransform.position += motion;
+            }
         }
 
         public void RotateY(float yAngle)
@@ -543,7 +560,7 @@ namespace MultiplayerARPG
 
         public Vector3 GetSnapToGroundMotion(Vector3 motion, Vector3 platformMotion, Vector3 forceMotion)
         {
-            if (Functions.IsUnderWater || _forceUngroundCountdown > 0f || motion.y > 0f)
+            if (!Functions.CanSimulateMovement() ||  Functions.IsUnderWater || _forceUngroundCountdown > 0f || motion.y > 0f)
                 return Vector3.zero;
 
             if (Physics.Raycast(EntityTransform.position + (Vector3.down * CacheCharacterController.skinWidth), Vector3.down, out RaycastHit hit, groundSnapDistance, GameInstance.Singleton.GetGameEntityGroundDetectionLayerMask(), QueryTriggerInteraction.Ignore) && hit.normal != Vector3.up)
