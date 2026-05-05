@@ -727,9 +727,13 @@ namespace MultiplayerARPG
                     // Cancelled
                     return;
                 }
-                if (string.IsNullOrEmpty(tempModel.equipSocket) || (!tempModel.useInstantiatedObject && tempModel.MeshPrefab == null && !tempModel.AddressableMeshPrefab.IsDataValid()))
+                if (string.IsNullOrEmpty(tempModel.equipSocket) ||
+                    (!tempModel.useInstantiatedObject && tempModel.MeshPrefab == null
+#if !DISABLE_ADDRESSABLES
+    && !tempModel.AddressableMeshPrefab.IsDataValid()
+#endif
+                    ))
                 {
-                    // Required data are empty, skip it
                     continue;
                 }
 
