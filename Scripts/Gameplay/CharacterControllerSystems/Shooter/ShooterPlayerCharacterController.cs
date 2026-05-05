@@ -346,57 +346,80 @@ namespace MultiplayerARPG
             set { CacheGameplayCameraController.MaxZoomDistance = value; }
         }
 
+        public ValueOverride<Vector3> OverrideCameraTargetOffset { get; private set; } = new ValueOverride<Vector3>();
         public Vector3 CameraTargetOffset
         {
             get
             {
+                Vector3 offsets = tpsTargetOffset;
                 switch (ActiveViewMode)
                 {
                     case ShooterControllerViewMode.Fps:
                         switch (PlayingCharacterEntity.ExtraMovementState)
                         {
                             case ExtraMovementState.IsCrouching:
-                                fpsTargetOffsetWhileCrouching.x = 0f;
-                                fpsTargetOffsetWhileCrouching.z = 0f;
-                                return fpsTargetOffsetWhileCrouching;
+                                offsets = fpsTargetOffsetWhileCrouching;
+                                offsets.x = 0f;
+                                offsets.z = 0f;
+                                break;
                             case ExtraMovementState.IsCrawling:
-                                fpsTargetOffsetWhileCrawling.x = 0f;
-                                fpsTargetOffsetWhileCrawling.z = 0f;
-                                return fpsTargetOffsetWhileCrawling;
+                                offsets = fpsTargetOffsetWhileCrawling;
+                                offsets.x = 0f;
+                                offsets.z = 0f;
+                                break;
                             default:
-                                fpsTargetOffset.x = 0f;
-                                fpsTargetOffset.z = 0f;
-                                return fpsTargetOffset;
+                                offsets = fpsTargetOffset;
+                                offsets.x = 0f;
+                                offsets.z = 0f;
+                                break;
                         }
+                        break;
                     case ShooterControllerViewMode.Shoulder:
                         switch (PlayingCharacterEntity.ExtraMovementState)
                         {
                             case ExtraMovementState.IsCrouching:
-                                return shoulderTargetOffsetWhileCrouching;
+                                offsets = shoulderTargetOffsetWhileCrouching;
+                                break;
                             case ExtraMovementState.IsCrawling:
-                                return shoulderTargetOffsetWhileCrawling;
+                                offsets = shoulderTargetOffsetWhileCrawling;
+                                break;
                             case ExtraMovementState.IsSprinting:
-                                return shoulderTargetOffsetWhileSprinting;
+                                offsets = shoulderTargetOffsetWhileSprinting;
+                                break;
                             case ExtraMovementState.IsWalking:
-                                return shoulderTargetOffsetWhileWalking;
+                                offsets = shoulderTargetOffsetWhileWalking;
+                                break;
                             default:
-                                return shoulderTargetOffset;
+                                offsets = shoulderTargetOffset;
+                                break;
                         }
+                        break;
                     default:
                         switch (PlayingCharacterEntity.ExtraMovementState)
                         {
                             case ExtraMovementState.IsCrouching:
-                                return tpsTargetOffsetWhileCrouching;
+                                offsets = tpsTargetOffsetWhileCrouching;
+                                break;
                             case ExtraMovementState.IsCrawling:
-                                return tpsTargetOffsetWhileCrawling;
+                                offsets = tpsTargetOffsetWhileCrawling;
+                                break;
                             case ExtraMovementState.IsSprinting:
-                                return tpsTargetOffsetWhileSprinting;
+                                offsets = tpsTargetOffsetWhileSprinting;
+                                break;
                             case ExtraMovementState.IsWalking:
-                                return tpsTargetOffsetWhileWalking;
+                                offsets = tpsTargetOffsetWhileWalking;
+                                break;
                             default:
-                                return tpsTargetOffset;
+                                offsets = tpsTargetOffset;
+                                break;
                         }
+                        break;
                 }
+                if (OverrideCameraTargetOffset.TryGetValue(out Vector3 overrideOffsets))
+                {
+                    offsets = overrideOffsets;
+                }
+                return offsets;
             }
         }
 
