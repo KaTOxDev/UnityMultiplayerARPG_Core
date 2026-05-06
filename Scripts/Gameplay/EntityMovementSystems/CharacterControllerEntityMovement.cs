@@ -8,6 +8,8 @@ using UnityEngine.Serialization;
 namespace MultiplayerARPG
 {
     [RequireComponent(typeof(CharacterController))]
+    [RequireComponent(typeof(CapsuleCollider))]
+    [RequireComponent(typeof(Rigidbody))]
     public partial class CharacterControllerEntityMovement : BaseNetworkedGameEntityComponent<BaseGameEntity>, IEntityMovementComponent, IBuiltInEntityMovement3D, IManagedUpdate, IManagedLateUpdate
     {
         /// <summary>
@@ -147,6 +149,32 @@ namespace MultiplayerARPG
             }
             private set => _cacheCharacterController = value;
         }
+        protected CapsuleCollider _cacheCapsuleCollider;
+        public CapsuleCollider CacheCapsuleCollider
+        {
+            get
+            {
+#if UNITY_EDITOR
+                if (!Application.isPlaying && _cacheCapsuleCollider == null)
+                    _cacheCapsuleCollider = GetComponent<CapsuleCollider>();
+#endif
+                return _cacheCapsuleCollider;
+            }
+            private set => _cacheCapsuleCollider = value;
+        }
+        protected Rigidbody _cacheRigidbody;
+        public Rigidbody CacheRigidbody
+        {
+            get
+            {
+#if UNITY_EDITOR
+                if (!Application.isPlaying && _cacheRigidbody == null)
+                    _cacheRigidbody = GetComponent<Rigidbody>();
+#endif
+                return _cacheRigidbody;
+            }
+            private set => _cacheRigidbody = value;
+        }
         public BuiltInEntityMovementFunctions3D Functions { get; private set; }
         public MovementColliderAdjustment ColliderAdjustment { get; private set; }
 
@@ -170,6 +198,16 @@ namespace MultiplayerARPG
                 CacheAnimator = GetComponentInChildren<Animator>();
             // Prepare character controller component
             CacheCharacterController = gameObject.GetOrAddComponent<CharacterController>();
+            // Prepare capsule collider component
+            CacheCapsuleCollider = gameObject.GetOrAddComponent<CapsuleCollider>();
+            CacheCapsuleCollider.isTrigger = true;
+            CacheCapsuleCollider.radius = CacheCharacterController.radius;
+            CacheCapsuleCollider.height = CacheCharacterController.height;
+            CacheCapsuleCollider.center = CacheCharacterController.center;
+            // Prepare rigidbody component
+            CacheRigidbody = gameObject.GetOrAddComponent<Rigidbody>();
+            CacheRigidbody.useGravity = false;
+            CacheRigidbody.isKinematic = true;
             if (skinWidthAdjustTarget != null)
                 skinWidthAdjustTarget.localPosition = Vector3.zero;
             ColliderAdjustment = gameObject.GetComponent<MovementColliderAdjustment>();
@@ -369,6 +407,9 @@ namespace MultiplayerARPG
             Functions.FixSwimUpPosition(deltaTime);
             if (skinWidthAdjustTarget != null)
                 skinWidthAdjustTarget.localPosition = CacheCharacterController.enabled ? -CacheCharacterController.skinWidth * Vector3.up : Vector3.zero;
+            CacheCapsuleCollider.radius = CacheCharacterController.radius;
+            CacheCapsuleCollider.height = CacheCharacterController.height;
+            CacheCapsuleCollider.center = CacheCharacterController.center;
         }
 
         public bool GroundCheck()
@@ -457,7 +498,7 @@ namespace MultiplayerARPG
 
         public void SetPosition(Vector3 position)
         {
-            if (Functions.CanSimulateMovement())
+            if (CacheCharacterController.enabled)
             {
                 CacheCharacterController.detectCollisions = false;
                 CacheCharacterController.Move(position - EntityTransform.position);
@@ -476,7 +517,7 @@ namespace MultiplayerARPG
 
         public void Move(MovementState movementState, ExtraMovementState extraMovementState, Vector3 motion, float deltaTime)
         {
-            if (Functions.CanSimulateMovement())
+            if (CacheCharacterController.enabled)
             {
                 CacheCharacterController.Move(AdjustCrawlMotion(movementState, extraMovementState, motion));
             }
@@ -563,7 +604,7 @@ namespace MultiplayerARPG
 
         public Vector3 GetSnapToGroundMotion(Vector3 motion, Vector3 platformMotion, Vector3 forceMotion)
         {
-            if (!Functions.CanSimulateMovement() ||  Functions.IsUnderWater || _forceUngroundCountdown > 0f || motion.y > 0f)
+            if (!Functions.CanSimulateMovement() || Functions.IsUnderWater || _forceUngroundCountdown > 0f || motion.y > 0f)
                 return Vector3.zero;
 
             if (Physics.Raycast(EntityTransform.position + (Vector3.down * CacheCharacterController.skinWidth), Vector3.down, out RaycastHit hit, groundSnapDistance, GameInstance.Singleton.GetGameEntityGroundDetectionLayerMask(), QueryTriggerInteraction.Ignore) && hit.normal != Vector3.up)

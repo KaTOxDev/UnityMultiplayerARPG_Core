@@ -142,6 +142,8 @@ namespace MultiplayerARPG
 
         protected virtual void OnTriggerEnter(Collider other)
         {
+            if (other is CharacterController)
+                return;
             TriggerEnter(other.gameObject);
         }
 
