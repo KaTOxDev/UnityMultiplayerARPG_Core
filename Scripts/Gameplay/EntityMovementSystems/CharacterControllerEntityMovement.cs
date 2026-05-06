@@ -498,16 +498,10 @@ namespace MultiplayerARPG
 
         public void SetPosition(Vector3 position)
         {
-            if (CacheCharacterController.enabled)
-            {
-                CacheCharacterController.detectCollisions = false;
-                CacheCharacterController.Move(position - EntityTransform.position);
-                CacheCharacterController.detectCollisions = true;
-            }
-            else
-            {
-                EntityTransform.position = position;
-            }
+            bool preChangedEnabled = CacheCharacterController.enabled;
+            CacheCharacterController.enabled = false;
+            EntityTransform.position = position;
+            CacheCharacterController.enabled = preChangedEnabled;
         }
 
         public Bounds GetMovementBounds()
