@@ -119,6 +119,12 @@ namespace MultiplayerARPG
 
         public static async UniTask<CurrencyDropEntity> Drop(BaseGameEntity dropper, float multiplier, RewardGivenType givenType, int giverLevel, int sourceLevel, Currency currency, int amount, IEnumerable<string> looters, float appearDuration)
         {
+            if (currency == null)
+                return null;
+
+            if (amount <= 0)
+                return null;
+
             CurrencyDropEntity entity = null;
             CurrencyDropEntity loadedPrefab = await GameInstance.Singleton.GetLoadedCurrencyDropEntityPrefab();
             if (loadedPrefab != null)

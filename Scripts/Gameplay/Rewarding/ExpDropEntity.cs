@@ -20,6 +20,9 @@ namespace MultiplayerARPG
 
         public static async UniTask<ExpDropEntity> Drop(BaseGameEntity dropper, float multiplier, RewardGivenType givenType, int giverLevel, int sourceLevel, int amount, IEnumerable<string> looters, float appearDuration)
         {
+            if (amount <= 0)
+                return null;
+
             ExpDropEntity entity = null;
             ExpDropEntity loadedPrefab = await GameInstance.Singleton.GetLoadedExpDropEntityPrefab();
             if (loadedPrefab != null)

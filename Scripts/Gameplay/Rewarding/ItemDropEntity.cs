@@ -7,6 +7,8 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Serialization;
+using Unity.Entities;
+
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -381,6 +383,9 @@ namespace MultiplayerARPG
 
         public static async UniTask<ItemDropEntity> Drop(BaseGameEntity dropper, RewardGivenType givenType, CharacterItem dropData, IEnumerable<string> looters, float appearDuration)
         {
+            if (dropData.amount <= 0)
+                return null;
+
             ItemDropEntity entity = null;
             ItemDropEntity loadedPrefab = await GameInstance.Singleton.GetLoadedItemDropEntityPrefab();
             if (loadedPrefab != null)
@@ -392,6 +397,12 @@ namespace MultiplayerARPG
 
         public static ItemDropEntity Drop(ItemDropEntity prefab, BaseGameEntity dropper, RewardGivenType givenType, CharacterItem dropData, IEnumerable<string> looters, float appearDuration)
         {
+            if (prefab == null)
+                return null;
+
+            if (dropData.amount <= 0)
+                return null;
+
             Vector3 dropPosition = dropper.EntityTransform.position;
             Quaternion dropRotation = Quaternion.identity;
             switch (GameInstance.Singleton.DimensionType)
@@ -416,9 +427,12 @@ namespace MultiplayerARPG
             return entity;
         }
 
-        public static ItemDropEntity Drop(ItemDropEntity prefab, Vector3 dropPosition, Quaternion dropRotation, RewardGivenType givenType, CharacterItem dropItem, IEnumerable<string> looters, float appearDuration)
+        public static ItemDropEntity Drop(ItemDropEntity prefab, Vector3 dropPosition, Quaternion dropRotation, RewardGivenType givenType, CharacterItem dropData, IEnumerable<string> looters, float appearDuration)
         {
             if (prefab == null)
+                return null;
+
+            if (dropData.amount <= 0)
                 return null;
 
             LiteNetLibIdentity spawnObj = BaseGameNetworkManager.Singleton.Assets.GetObjectInstance(
@@ -427,7 +441,7 @@ namespace MultiplayerARPG
             ItemDropEntity entity = spawnObj.GetComponent<ItemDropEntity>();
             entity.GivenType = givenType;
             entity.PutOnPlaceholder = true;
-            entity.DropItems = new List<CharacterItem> { dropItem };
+            entity.DropItems = new List<CharacterItem> { dropData };
             entity.Looters = new HashSet<string>(looters);
             entity.Init();
             BaseGameNetworkManager.Singleton.Assets.NetworkSpawn(spawnObj);
