@@ -239,6 +239,8 @@ namespace MultiplayerARPG
         public byte HotkeyEquipWeaponSet { get; set; }
         public IShooterGameplayCameraController CacheGameplayCameraController { get; protected set; }
         public IMinimapCameraController CacheMinimapCameraController { get; protected set; }
+        public override Camera MainCamera => CacheGameplayCameraController.Camera;
+        public override Transform MainCameraTransform => CacheGameplayCameraController.CameraTransform;
         public BaseCharacterModel CacheFpsModel { get; protected set; }
         public RectTransform CrosshairRect { get => crosshairRect; set => crosshairRect = value; }
         public bool HideCrosshair { get => hideCrosshair; set => hideCrosshair = value; }

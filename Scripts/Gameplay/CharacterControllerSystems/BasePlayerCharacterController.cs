@@ -53,6 +53,9 @@ namespace MultiplayerARPG
             }
         }
 
+        public abstract Camera MainCamera { get; }
+        public abstract Transform MainCameraTransform { get; }
+
         public Transform CameraTargetTransform
         {
             get { return PlayingCharacterEntity.CameraTargetTransform; }

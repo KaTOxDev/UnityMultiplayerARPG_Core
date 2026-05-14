@@ -125,6 +125,8 @@ namespace MultiplayerARPG
         public NearbyEntityDetector EnemyEntityDetector { get; protected set; }
         public IGameplayCameraController CacheGameplayCameraController { get; protected set; }
         public IMinimapCameraController CacheMinimapCameraController { get; protected set; }
+        public override Camera MainCamera => CacheGameplayCameraController.Camera;
+        public override Transform MainCameraTransform => CacheGameplayCameraController.CameraTransform;
         public GameObject CacheTargetObject { get; protected set; }
 
         // Input & control states variables
