@@ -31,6 +31,8 @@ namespace MultiplayerARPG
         protected Vector3? _previousPosition;
         protected RaycastHit2D[] _hits2D = new RaycastHit2D[8];
         protected RaycastHit[] _hits3D = new RaycastHit[8];
+        protected Collider2D[] _overlaps2D = new Collider2D[128];
+        protected Collider[] _overlaps3D = new Collider[128];
         protected readonly HashSet<uint> _alreadyHitObjects = new HashSet<uint>();
 
         protected bool _isExploded;
@@ -336,18 +338,18 @@ namespace MultiplayerARPG
         {
             if (CurrentGameInstance.DimensionType == DimensionType.Dimension2D)
             {
-                Collider2D[] colliders2D = Physics2D.OverlapCircleAll(CacheTransform.position, explodeDistance);
-                foreach (Collider2D collider in colliders2D)
+                int hitCount = Physics2D.OverlapCircleNonAlloc(CacheTransform.position, explodeDistance, _overlaps2D);
+                for (int i = 0; i < hitCount; ++i)
                 {
-                    FindAndApplyDamage(collider.gameObject, false, _alreadyHitObjects);
+                    FindAndApplyDamage(_overlaps2D[i].gameObject, false, _alreadyHitObjects);
                 }
             }
             else
             {
-                Collider[] colliders = Physics.OverlapSphere(CacheTransform.position, explodeDistance);
-                foreach (Collider collider in colliders)
+                int hitCount = Physics.OverlapSphereNonAlloc(CacheTransform.position, explodeDistance, _overlaps3D);
+                for (int i = 0; i < hitCount; ++i)
                 {
-                    FindAndApplyDamage(collider.gameObject, false, _alreadyHitObjects);
+                    FindAndApplyDamage(_overlaps3D[i].gameObject, false, _alreadyHitObjects);
                 }
             }
         }
