@@ -9,8 +9,10 @@ namespace MultiplayerARPG
         public static NearbyEntityDetectorManager Instance => _instance != null ? _instance : (_instance = CreateInstance());
         private static HashSet<NearbyEntityDetector> _detectors = new HashSet<NearbyEntityDetector>();
         private static float _latestDetectTime = -1f;
+        private static float _latestSortTime = -1f;
 
-        public float delay = 1f;
+        public float detectDelay = 0.5f;
+        public float sortDelay = 1f;
 
         private static NearbyEntityDetectorManager CreateInstance()
         {
@@ -69,17 +71,37 @@ namespace MultiplayerARPG
                 return;
 
             float currentTime = Time.unscaledTime;
-            if (currentTime - _latestDetectTime > delay)
+            bool willDetect = currentTime - _latestDetectTime > detectDelay;
+            if (willDetect)
             {
                 _latestDetectTime = currentTime;
-                foreach (NearbyEntityDetector entityDetector in _detectors)
-                {
-                    entityDetector.DetectEntities();
-                }
+            }
+            bool willSort = currentTime - _latestSortTime > sortDelay;
+            if (willSort)
+            {
+                _latestSortTime = currentTime;
             }
             foreach (NearbyEntityDetector entityDetector in _detectors)
             {
-                entityDetector.RemoveInactiveAndSortNearestAllEntity();
+                bool hasChanges = false;
+                if (willDetect)
+                {
+                    entityDetector.DetectEntities();
+                    hasChanges = true;
+                }
+                else
+                {
+                    hasChanges |= entityDetector.RemoveAllInactiveEntities();
+                }
+                if (willSort)
+                {
+                    entityDetector.SortAllEntities();
+                    hasChanges = true;
+                }
+                if (hasChanges)
+                {
+                    entityDetector.TriggerOnUpdateList();
+                }
             }
         }
     }

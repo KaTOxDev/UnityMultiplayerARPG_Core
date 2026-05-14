@@ -93,6 +93,11 @@ namespace MultiplayerARPG
             _excludeCollider2Ds.Clear();
         }
 
+        internal void TriggerOnUpdateList()
+        {
+            onUpdateList?.Invoke();
+        }
+
         internal void DetectEntities()
         {
             int tempHitCount;
@@ -110,8 +115,6 @@ namespace MultiplayerARPG
                         AddEntity(other.gameObject);
                     }
                     ArrayPool<Collider2D>.Shared.Return(collider2Ds);
-                    if (onUpdateList != null)
-                        onUpdateList.Invoke();
                     break;
                 default:
                     Collider[] colliders = ArrayPool<Collider>.Shared.Rent(resultAllocSize);
@@ -124,27 +127,44 @@ namespace MultiplayerARPG
                         AddEntity(other.gameObject);
                     }
                     ArrayPool<Collider>.Shared.Return(colliders);
-                    if (onUpdateList != null)
-                        onUpdateList.Invoke();
                     break;
             }
         }
 
-        internal void RemoveInactiveAndSortNearestAllEntity()
+        internal bool RemoveAllInactiveEntities()
         {
-            RemoveInactiveAndSortNearestEntity(characters);
-            RemoveInactiveAndSortNearestEntity(players);
-            RemoveInactiveAndSortNearestEntity(monsters);
-            RemoveInactiveAndSortNearestEntity(npcs);
-            RemoveInactiveAndSortNearestEntity(itemDrops);
-            RemoveInactiveAndSortNearestEntity(rewardDrops);
-            RemoveInactiveAndSortNearestEntity(buildings);
-            RemoveInactiveAndSortNearestEntity(vehicles);
-            RemoveInactiveAndSortNearestEntity(warpPortals);
-            RemoveInactiveAndSortNearestEntity(itemsContainers);
-            RemoveInactiveAndSortNearestActivatableEntity(activatableEntities);
-            RemoveInactiveAndSortNearestActivatableEntity(holdActivatableEntities);
-            RemoveInactiveAndSortNearestActivatableEntity(pickupActivatableEntities);
+            bool hasChanges = false;
+            hasChanges |= RemoveInactiveEntities(characters);
+            hasChanges |= RemoveInactiveEntities(players);
+            hasChanges |= RemoveInactiveEntities(monsters);
+            hasChanges |= RemoveInactiveEntities(npcs);
+            hasChanges |= RemoveInactiveEntities(itemDrops);
+            hasChanges |= RemoveInactiveEntities(rewardDrops);
+            hasChanges |= RemoveInactiveEntities(buildings);
+            hasChanges |= RemoveInactiveEntities(vehicles);
+            hasChanges |= RemoveInactiveEntities(warpPortals);
+            hasChanges |= RemoveInactiveEntities(itemsContainers);
+            hasChanges |= RemoveInactiveActivatableEntities(activatableEntities);
+            hasChanges |= RemoveInactiveActivatableEntities(holdActivatableEntities);
+            hasChanges |= RemoveInactiveActivatableEntities(pickupActivatableEntities);
+            return hasChanges;
+        }
+
+        internal void SortAllEntities()
+        {
+            SortEntities(characters);
+            SortEntities(players);
+            SortEntities(monsters);
+            SortEntities(npcs);
+            SortEntities(itemDrops);
+            SortEntities(rewardDrops);
+            SortEntities(buildings);
+            SortEntities(vehicles);
+            SortEntities(warpPortals);
+            SortEntities(itemsContainers);
+            SortActivatableEntities(activatableEntities);
+            SortActivatableEntities(holdActivatableEntities);
+            SortActivatableEntities(pickupActivatableEntities);
         }
 
         public bool AddEntity(GameObject other)
@@ -442,9 +462,9 @@ namespace MultiplayerARPG
             }
         }
 
-        private void RemoveInactiveAndSortNearestEntity<T>(List<T> entities) where T : BaseGameEntity
+
+        private bool RemoveInactiveEntities<T>(List<T> entities) where T : BaseGameEntity
         {
-            T temp;
             bool hasUpdate = false;
             for (int i = entities.Count - 1; i >= 0; --i)
             {
@@ -454,26 +474,11 @@ namespace MultiplayerARPG
                     hasUpdate = true;
                 }
             }
-            if (hasUpdate && onUpdateList != null)
-                onUpdateList.Invoke();
-            for (int i = 0; i < entities.Count; i++)
-            {
-                for (int j = 0; j < entities.Count - 1; j++)
-                {
-                    if (Vector3.Distance(entities[j].transform.position, GameInstance.PlayingCharacterEntity.EntityTransform.position) >
-                        Vector3.Distance(entities[j + 1].transform.position, GameInstance.PlayingCharacterEntity.EntityTransform.position))
-                    {
-                        temp = entities[j + 1];
-                        entities[j + 1] = entities[j];
-                        entities[j] = temp;
-                    }
-                }
-            }
+            return hasUpdate;
         }
 
-        private void RemoveInactiveAndSortNearestActivatableEntity<T>(List<T> entities) where T : IBaseActivatableEntity
+        private bool RemoveInactiveActivatableEntities<T>(List<T> entities) where T : IBaseActivatableEntity
         {
-            T temp;
             bool hasUpdate = false;
             for (int i = entities.Count - 1; i >= 0; --i)
             {
@@ -484,21 +489,21 @@ namespace MultiplayerARPG
                     hasUpdate = true;
                 }
             }
-            if (hasUpdate && onUpdateList != null)
-                onUpdateList.Invoke();
-            for (int i = 0; i < entities.Count; i++)
-            {
-                for (int j = 0; j < entities.Count - 1; j++)
-                {
-                    if (Vector3.Distance(entities[j].EntityTransform.position, GameInstance.PlayingCharacterEntity.EntityTransform.position) >
-                        Vector3.Distance(entities[j + 1].EntityTransform.position, GameInstance.PlayingCharacterEntity.EntityTransform.position))
-                    {
-                        temp = entities[j + 1];
-                        entities[j + 1] = entities[j];
-                        entities[j] = temp;
-                    }
-                }
-            }
+            return hasUpdate;
+        }
+
+        private void SortEntities<T>(List<T> entities) where T : BaseGameEntity
+        {
+            if (entities == null || entities.Count == 0) return;
+            Vector3 pos = transform.position;
+            entities.Sort((a, b) => (a.transform.position - pos).sqrMagnitude.CompareTo((b.transform.position - pos).sqrMagnitude));
+        }
+
+        private void SortActivatableEntities<T>(List<T> entities) where T : IBaseActivatableEntity
+        {
+            if (entities == null || entities.Count == 0) return;
+            Vector3 pos = transform.position;
+            entities.Sort((a, b) => (a.EntityTransform.position - pos).sqrMagnitude.CompareTo((b.EntityTransform.position - pos).sqrMagnitude));
         }
     }
 }
