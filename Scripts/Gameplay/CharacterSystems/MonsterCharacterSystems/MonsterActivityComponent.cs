@@ -314,7 +314,7 @@ namespace MultiplayerARPG
                 // Reset follow time, because it is not following
                 _followEnemyElasped = 0f;
                 // Stop movement
-                SetWanderDestination(CacheTransform.position);
+                SetWanderDestination(EntityTransform.position);
                 // Lookat target then do something when it's in range
                 Vector3 lookAtDirection = (targetPosition - currentPosition).normalized;
                 bool turnedToEnemy = false;
