@@ -1,8 +1,7 @@
-﻿using Insthync.AddressableAssetTools;
-using System.Collections.Generic;
+﻿using Cysharp.Threading.Tasks;
+using Insthync.AddressableAssetTools;
 using UnityEngine;
 using UnityEngine.Serialization;
-using Cysharp.Threading.Tasks;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -10,7 +9,6 @@ using UnityEditor;
 namespace MultiplayerARPG
 {
     [DisallowMultipleComponent]
-    [DefaultExecutionOrder(DefaultExecutionOrders.CHARACTER_MODEL_MANAGER)]
     public partial class CharacterModelManager : BaseGameEntityComponent<BaseGameEntity>
     {
         public const byte HIDE_SETTER_ENTITY = 0;

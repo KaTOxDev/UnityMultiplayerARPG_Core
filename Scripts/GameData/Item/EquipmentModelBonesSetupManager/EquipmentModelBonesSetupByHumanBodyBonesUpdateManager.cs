@@ -1,3 +1,4 @@
+using Insthync.ManagedUpdating;
 using System.Collections.Generic;
 using Unity.Burst;
 using Unity.Collections;
@@ -8,8 +9,7 @@ using UnityEngine.Jobs;
 
 namespace MultiplayerARPG
 {
-    [DefaultExecutionOrder(int.MaxValue)]
-    public class EquipmentModelBonesSetupByHumanBodyBonesUpdateManager : MonoBehaviour
+    public class EquipmentModelBonesSetupByHumanBodyBonesUpdateManager : MonoBehaviour, IManagedLateUpdate
     {
         private static EquipmentModelBonesSetupByHumanBodyBonesUpdateManager _instance;
         public static EquipmentModelBonesSetupByHumanBodyBonesUpdateManager Instance => _instance != null ? _instance : (_instance = CreateInstance());
@@ -42,6 +42,7 @@ namespace MultiplayerARPG
         {
             _instance = this;
             DontDestroyOnLoad(gameObject);
+            UpdateManager.Register(DefaultExecutionOrders.GAME_ENTITY_MODEL_POST_IK, this);
         }
 
         private void OnDestroy()
@@ -63,6 +64,8 @@ namespace MultiplayerARPG
             _allNSrc.Clear();
             _allSrc.Clear();
             _allDst.Clear();
+
+            UpdateManager.Unregister(DefaultExecutionOrders.GAME_ENTITY_MODEL_POST_IK, this);
         }
 
         public void Register(AnimatorHandle srcHandle, Transform[] src, AnimatorHandle dstHandle, Transform[] dst)
@@ -102,7 +105,7 @@ namespace MultiplayerARPG
             _destroyedDstIds.Add(handle.Id);
         }
 
-        private void LateUpdate()
+        public void ManagedLateUpdate()
         {
             // Ensure previous job is done
             _jobHandle.Complete();
