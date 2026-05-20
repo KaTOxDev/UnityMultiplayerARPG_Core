@@ -56,17 +56,17 @@ namespace MultiplayerARPG
         public abstract Camera MainCamera { get; }
         public abstract Transform MainCameraTransform { get; }
 
-        public Transform CameraTargetTransform
+        public virtual Transform CameraTargetTransform
         {
             get { return PlayingCharacterEntity.CameraTargetTransform; }
         }
 
-        public Transform EntityTransform
+        public virtual Transform EntityTransform
         {
             get { return PlayingCharacterEntity.EntityTransform; }
         }
 
-        public Transform MovementTransform
+        public virtual Transform MovementTransform
         {
             get { return PlayingCharacterEntity.MovementTransform; }
         }
@@ -74,6 +74,101 @@ namespace MultiplayerARPG
         public float StoppingDistance
         {
             get { return PlayingCharacterEntity.StoppingDistance; }
+        }
+
+        public ValueOverride<Vector3> OverrideCameraTargetOffset { get; } = new ValueOverride<Vector3>();
+        public abstract Vector3 AssignedCameraTargetOffset { get; set; }
+        public virtual Vector3 CameraTargetOffset
+        {
+            get
+            {
+                if (OverrideCameraTargetOffset.TryGetValue(out Vector3 overrideOffsets))
+                {
+                    return overrideOffsets;
+                }
+                return AssignedCameraTargetOffset;
+            }
+        }
+
+        public ValueOverride<float> OverrideCameraZoomDistance { get; } = new ValueOverride<float>();
+        public abstract float AssignedCameraZoomDistance { get; set; }
+        public virtual float CameraZoomDistance
+        {
+            get
+            {
+                if (OverrideCameraZoomDistance.TryGetValue(out float value))
+                {
+                    return value;
+                }
+                return AssignedCameraZoomDistance;
+            }
+        }
+
+        public ValueOverride<float> OverrideCameraFov { get; } = new ValueOverride<float>();
+        public abstract float AssignedCameraFov { get; set; }
+        public float CameraFov
+        {
+            get
+            {
+                if (OverrideCameraFov.TryGetValue(out float value))
+                {
+                    return value;
+                }
+                return AssignedCameraFov;
+            }
+        }
+
+        public ValueOverride<float> OverrideCameraNearClipPlane { get; } = new ValueOverride<float>();
+        public abstract float AssignedCameraNearClipPlane { get; set; }
+        public virtual float CameraNearClipPlane
+        {
+            get
+            {
+                if (OverrideCameraNearClipPlane.TryGetValue(out float value))
+                {
+                    return value;
+                }
+                return AssignedCameraNearClipPlane;
+            }
+        }
+
+        public ValueOverride<float> OverrideCameraFarClipPlane { get; } = new ValueOverride<float>();
+        public abstract float AssignedCameraFarClipPlane { get; set; }
+        public virtual float CameraFarClipPlane
+        {
+            get
+            {
+                if (OverrideCameraFarClipPlane.TryGetValue(out float value))
+                {
+                    return value;
+                }
+                return AssignedCameraFarClipPlane;
+            }
+        }
+
+        public ValueOverride<float> OverrideCameraRotationSpeedScale { get; } = new ValueOverride<float>();
+        public abstract float AssignedCameraRotationSpeedScale { get; set; }
+        public float CameraRotationSpeedScale
+        {
+            get
+            {
+                if (OverrideCameraRotationSpeedScale.TryGetValue(out float value))
+                {
+                    return value;
+                }
+                return AssignedCameraRotationSpeedScale;
+            }
+        }
+        public ValueOverride<bool> OverrideEnableWallHitSpring { get; } = new ValueOverride<bool>();
+        public abstract bool AssignedEnableWallHitSpring { get; set; }
+        public bool EnableWallHitSpring
+        {
+            get
+            {
+                if (OverrideEnableWallHitSpring.TryGetValue(out bool result))
+                    return result;
+                return AssignedEnableWallHitSpring;
+            }
         }
 
         public BaseUISceneGameplay UISceneGameplay { get; protected set; }
