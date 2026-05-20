@@ -315,7 +315,7 @@ namespace MultiplayerARPG
             IActivatableEntity activatableEntity;
             IHoldActivatableEntity holdActivatableEntity;
             IPickupActivatableEntity pickupActivatableEntity;
-            FindEntity(other, out player, out monster, out npc, out itemDrop, out rewardDrop, out materialDrop, out building, out vehicle, out warpPortal, out itemsContainer, out activatableEntity, out holdActivatableEntity, out pickupActivatableEntity, false);
+            FindEntity(other, out player, out monster, out npc, out itemDrop, out rewardDrop, out building, out vehicle, out warpPortal, out itemsContainer, out activatableEntity, out holdActivatableEntity, out pickupActivatableEntity, false);
 
             bool removeSomething = false;
             if (player != null)
