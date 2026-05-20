@@ -7,12 +7,20 @@ namespace MultiplayerARPG
     {
         private static NearbyEntityDetectorManager _instance;
         public static NearbyEntityDetectorManager Instance => _instance != null ? _instance : (_instance = CreateInstance());
-        private static HashSet<NearbyEntityDetector> _detectors = new HashSet<NearbyEntityDetector>();
+        private static readonly HashSet<NearbyEntityDetector> _detectors = new HashSet<NearbyEntityDetector>();
         private static float _latestDetectTime = -1f;
         private static float _latestSortTime = -1f;
 
         public float detectDelay = 0.5f;
         public float sortDelay = 1f;
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        public static void Initialize()
+        {
+            _instance = null;
+            _latestDetectTime = -1f;
+            _latestSortTime = -1f;
+        }
 
         private static NearbyEntityDetectorManager CreateInstance()
         {
@@ -86,17 +94,15 @@ namespace MultiplayerARPG
                 bool hasChanges = false;
                 if (willDetect)
                 {
-                    entityDetector.DetectEntities();
-                    hasChanges = true;
+                    hasChanges |= entityDetector.DetectEntities();
                 }
                 else
                 {
                     hasChanges |= entityDetector.RemoveAllInactiveEntities();
                 }
-                if (willSort)
+                if (willDetect || willSort)
                 {
                     entityDetector.SortAllEntities();
-                    hasChanges = true;
                 }
                 if (hasChanges)
                 {

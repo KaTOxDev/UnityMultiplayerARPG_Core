@@ -42,6 +42,8 @@ namespace MultiplayerARPG
         public readonly List<IPickupActivatableEntity> pickupActivatableEntities = new List<IPickupActivatableEntity>();
         private readonly HashSet<Collider> _excludeColliders = new HashSet<Collider>();
         private readonly HashSet<Collider2D> _excludeCollider2Ds = new HashSet<Collider2D>();
+        private readonly HashSet<GameObject> _foundObjects = new HashSet<GameObject>();
+        private readonly HashSet<GameObject> _prevFoundObjects = new HashSet<GameObject>();
 
         public System.Action onUpdateList;
 
@@ -53,6 +55,8 @@ namespace MultiplayerARPG
 
         private void OnDestroy()
         {
+            _foundObjects?.Clear();
+            _prevFoundObjects?.Clear();
             ClearDetection();
             ClearExclusion();
             onUpdateList = null;
@@ -98,38 +102,71 @@ namespace MultiplayerARPG
             onUpdateList?.Invoke();
         }
 
-        internal void DetectEntities()
+        internal bool DetectEntities()
         {
             int tempHitCount;
+
+            _prevFoundObjects.Clear();
+            foreach (GameObject foundObject in _foundObjects)
+            {
+                if (foundObject != null)
+                    _prevFoundObjects.Add(foundObject);
+            }
+            _foundObjects.Clear();
+
             ClearDetection();
+
             switch (GameInstance.Singleton.DimensionType)
             {
                 case DimensionType.Dimension2D:
                     Collider2D[] collider2Ds = ArrayPool<Collider2D>.Shared.Rent(resultAllocSize);
+
                     ContactFilter2D contactFilter2D = new ContactFilter2D();
-                    tempHitCount = Physics2D.OverlapCircle(GameInstance.PlayingCharacterEntity.EntityTransform.position, detectingRadius, contactFilter2D, collider2Ds);
+
+                    tempHitCount = Physics2D.OverlapCircle(
+                        GameInstance.PlayingCharacterEntity.EntityTransform.position,
+                        detectingRadius,
+                        contactFilter2D,
+                        collider2Ds);
+
                     for (int i = 0; i < tempHitCount; ++i)
                     {
                         Collider2D other = collider2Ds[i];
+
                         if (other == null || _excludeCollider2Ds.Contains(other))
                             continue;
-                        AddEntity(other.gameObject);
+
+                        if (AddEntity(other.gameObject))
+                            _foundObjects.Add(other.gameObject);
                     }
+
                     ArrayPool<Collider2D>.Shared.Return(collider2Ds);
                     break;
+
                 default:
                     Collider[] colliders = ArrayPool<Collider>.Shared.Rent(resultAllocSize);
-                    tempHitCount = Physics.OverlapSphereNonAlloc(GameInstance.PlayingCharacterEntity.EntityTransform.position, detectingRadius, colliders);
+
+                    tempHitCount = Physics.OverlapSphereNonAlloc(
+                        GameInstance.PlayingCharacterEntity.EntityTransform.position,
+                        detectingRadius,
+                        colliders);
+
                     for (int i = 0; i < tempHitCount; ++i)
                     {
                         Collider other = colliders[i];
+
                         if (other == null || _excludeColliders.Contains(other))
                             continue;
-                        AddEntity(other.gameObject);
+
+                        if (AddEntity(other.gameObject))
+                            _foundObjects.Add(other.gameObject);
                     }
+
                     ArrayPool<Collider>.Shared.Return(colliders);
                     break;
             }
+
+            return !_foundObjects.SetEquals(_prevFoundObjects);
         }
 
         internal bool RemoveAllInactiveEntities()
@@ -278,7 +315,7 @@ namespace MultiplayerARPG
             IActivatableEntity activatableEntity;
             IHoldActivatableEntity holdActivatableEntity;
             IPickupActivatableEntity pickupActivatableEntity;
-            FindEntity(other, out player, out monster, out npc, out itemDrop, out rewardDrop, out building, out vehicle, out warpPortal, out itemsContainer, out activatableEntity, out holdActivatableEntity, out pickupActivatableEntity, false);
+            FindEntity(other, out player, out monster, out npc, out itemDrop, out rewardDrop, out materialDrop, out building, out vehicle, out warpPortal, out itemsContainer, out activatableEntity, out holdActivatableEntity, out pickupActivatableEntity, false);
 
             bool removeSomething = false;
             if (player != null)
